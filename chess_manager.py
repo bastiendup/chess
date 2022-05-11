@@ -1,6 +1,5 @@
 import re
 
-
 class chess_manager:
     def CheckIfKingRook(movement):
         possible_rooks = {'O-O': 'King side', 'O-O-O': 'Queen side'}
@@ -14,21 +13,20 @@ class chess_manager:
 
     def CheckPiece(movement):
         pieces = {'K': 'King', 'B': 'Bishop', 'Q': 'Queen', 'N': 'Knight', 'R': 'Rook'}
-        piece_regex = re.compile(r'^K|Q|R|B|N')
+        piece_regex = re.compile(r'^(K|Q|R|B|N)')
         match = re.search(piece_regex, movement)
         piece = 'Pawn'
         if match:
             piece = pieces[match.group()]
         print(f'Piece -> {piece}')
-        return re.sub(piece_regex, '', movement)
+        return re.sub(r'^(K|Q|R|B|N)', '', movement)
 
     def CheckCapture(movement):
         match = re.search(r'^x', movement)
         capture = 'No'
         if match:
             capture = 'Yes'
-            print(f'Capture -> {capture}')
-            return re.sub(r'^x', '', movement) 
+            movement = re.sub(r'^x', '', movement) 
         print(f'Capture -> {capture}')
         return movement
 
@@ -39,8 +37,7 @@ class chess_manager:
         disambiguating_file = 'No'
         if match:
             disambiguating_file = match.group(1)
-            print(f'Disambiguating File -> {disambiguating_file}')
-            return re.sub(r'^[a-h]', '', movement) 
+            movement = re.sub(r'^[a-h]', '', movement) 
         print(f'Disambiguating File -> {disambiguating_file}')
         return movement
 
@@ -51,8 +48,7 @@ class chess_manager:
         disambiguating_file = 'No'
         if match:
             disambiguating_file = match.group(1)
-            print(f'Disambiguating Rank -> {disambiguating_file}')
-            return re.sub(r'^[1-8]', '', movement) 
+            movement = re.sub(r'^[1-8]', '', movement) 
         print(f'Disambiguating Rank -> {disambiguating_file}')
         return movement
 
@@ -63,8 +59,7 @@ class chess_manager:
         disambiguating_file = 'No'
         if match:
             disambiguating_file = match.group(1)
-            print(f'Disambiguating File & Rank -> {disambiguating_file}')
-            return re.sub(r'^[a-h][1-8]', '', movement) 
+            movement = re.sub(r'^[a-h][1-8]', '', movement) 
         print(f'Disambiguating File & Rank -> {disambiguating_file}')
         return movement
 
@@ -75,8 +70,7 @@ class chess_manager:
         move = 'No'
         if match:
             move = match.group()
-            print(f'Moving -> {move}')
-            return re.sub(r'^[a-h][1-8]', '', movement)
+            movement = re.sub(r'^[a-h][1-8]', '', movement)
         print(f'Moving -> {move}')
         return movement
 
@@ -88,8 +82,7 @@ class chess_manager:
         promotion = 'No'
         if match:
             promotion = promote_piece[match.group(1)]
-            print(f'Promotion -> {promotion}')
-            return re.sub(r'^=(Q|B|N|R)', '', movement)
+            movement = re.sub(r'^=(Q|B|N|R)', '', movement)
         print(f'Promotion -> {promotion}')
         return movement
 
@@ -101,8 +94,7 @@ class chess_manager:
         checkmate = 'No'
         if match:
             checkmate = check_ending[match.group(1)]
-            print(f'Checkmate -> {checkmate}')
-            return re.sub(r'^\+|\#', '', movement) 
+            movement = re.sub(r'^\+|\#', '', movement) 
         print(f'Checkmate -> {checkmate}')
         return movement
     
