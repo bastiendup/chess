@@ -1,10 +1,11 @@
 import board
 import piece
 
+
 class Chess():
     """
     A class to represent the game of chess.
-    
+
     ...
 
     Attributes:
@@ -53,9 +54,9 @@ class Chess():
                     pawn = piece.Knight(True)
                 elif promote == 'B':
                     pawn = piece.Bishop(True)
-                elif promote == 'P' or promote == '': 
+                elif promote == 'P' or promote == '':
                     pawn = piece.Pawn(True)
-        self.board.board[pos[0]][pos[1]] = pawn 
+        self.board.board[pos[0]][pos[1]] = pawn
 
     def move(self, start, to):
         """
@@ -68,7 +69,7 @@ class Chess():
 
         to : tup
             Position of where the piece is to be moved
-        
+
         precondition: `start` and `to` are valid positions on the board
         """
 
@@ -94,14 +95,16 @@ class Chess():
             # Board reconfiguration is handled in Piece
             if target_piece.name == 'K' and abs(start[1] - to[1]) == 2:
                 print("castled")
-                
+
                 if self.turn and self.black_ghost_piece:
-                    self.board.board[self.black_ghost_piece[0]][self.black_ghost_piece[1]] = None
+                    self.board.board[self.black_ghost_piece[0]
+                                     ][self.black_ghost_piece[1]] = None
                 elif not self.turn and self.white_ghost_piece:
-                    self.board.board[self.white_ghost_piece[0]][self.white_ghost_piece[1]] = None
+                    self.board.board[self.white_ghost_piece[0]
+                                     ][self.white_ghost_piece[1]] = None
                 self.turn = not self.turn
                 return
-                
+
             if self.board.board[to[0]][to[1]]:
                 print(str(self.board.board[to[0]][to[1]]) + " taken.")
                 # Special logic for ghost piece, deletes the actual pawn that is not in the `to`
@@ -115,7 +118,8 @@ class Chess():
                         ] = None
                         self.black_ghost_piece = None
                     else:
-                        self.board.board[self.white_ghost_piece[0] - 1][self.black_ghost_piece[1]] = None
+                        self.board.board[self.white_ghost_piece[0] -
+                                         1][self.black_ghost_piece[1]] = None
                         self.white_ghost_piece = None
 
             self.board.board[to[0]][to[1]] = target_piece
@@ -123,9 +127,11 @@ class Chess():
             print(str(target_piece) + " moved.")
 
             if self.turn and self.black_ghost_piece:
-                self.board.board[self.black_ghost_piece[0]][self.black_ghost_piece[1]] = None
+                self.board.board[self.black_ghost_piece[0]
+                                 ][self.black_ghost_piece[1]] = None
             elif not self.turn and self.white_ghost_piece:
-                self.board.board[self.white_ghost_piece[0]][self.white_ghost_piece[1]] = None
+                self.board.board[self.white_ghost_piece[0]
+                                 ][self.white_ghost_piece[1]] = None
 
             self.turn = not self.turn
 
@@ -150,7 +156,6 @@ def translate(s):
         return None
 
 
-
 if __name__ == "__main__":
     chess = Chess()
     chess.board.print_board()
@@ -158,7 +163,7 @@ if __name__ == "__main__":
     while True:
         start = input("From: ")
         to = input("To: ")
-        
+
         start = translate(start)
         to = translate(to)
 
@@ -170,12 +175,11 @@ if __name__ == "__main__":
         # check for promotion pawns
         i = 0
         while i < 8:
-            if not chess.turn and chess.board.board[0][i] != None and \
-                chess.board.board[0][i].name == 'P':
+            if not chess.turn and chess.board.board[0][i] != None and chess.board.board[0][i].name == 'P':
                 chess.promotion((0, i))
                 break
             elif chess.turn and chess.board.board[7][i] != None and \
-                chess.board.board[7][i].name == 'P':
+                    chess.board.board[7][i].name == 'P':
                 chess.promotion((7, i))
                 break
             i += 1

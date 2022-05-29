@@ -1,113 +1,127 @@
 import re
+from board import Board
+from chessman import *
+from old.piece import Knight
 
-class chess_manager:
-    def CheckIfKingRook(movement):
-        possible_rooks = {'O-O': 'King side', 'O-O-O': 'Queen side'}
+
+class Chess_Manager:
+
+    def __init__(self) -> None:
+        self.board = Board()
+
+    # region Rook
+
+    def king_side_rook_white(self):
+        b = self.board.board
+        b[7][4] = None
+        b[7][5] = Rook(0, 5, True)
+        b[7][6] = King(0, 6, True)
+        b[7][7] = None
+
+    def queen_side_rook_white(self):
+        b = self.board.board
+        b[7][0] = None
+        b[7][3] = Rook(0, 5, True)
+        b[7][2] = King(0, 6, True)
+        b[7][4] = None
+
+    def king_side_rook_black(self):
+        b = self.board.board
+        b[0][4] = None
+        b[0][5] = Rook(0, 5, False)
+        b[0][6] = King(0, 6, False)
+        b[0][7] = None
+
+    def queen_side_rook_black(self):
+        b = self.board.board
+        b[0][0] = None
+        b[0][3] = Rook(0, 5, False)
+        b[0][2] = King(0, 6, False)
+        b[0][4] = None
+
+    def CheckIfKingRook(self, movement, isWhiteTurn):
+        color = 'white' if isWhiteTurn else 'black'
+        possible_rooks = {
+            'O-O': 'king_side_rook_',
+            'O-O-O': 'queen_side_rook_'
+        }
         king_rook_regex = re.compile(r'(O-O)(-O)?')
         match = re.search(king_rook_regex, movement)
-        rook = 'No'
         if match:
-            rook = possible_rooks[match.group()]
-        print(f'Rook -> {rook}')
-        return re.sub(king_rook_regex, '', movement)
+            rook = possible_rooks[match.group()] + color
+            getattr(self, rook)()
 
-    def CheckPiece(movement):
-        pieces = {'K': 'King', 'B': 'Bishop', 'Q': 'Queen', 'N': 'Knight', 'R': 'Rook'}
-        piece_regex = re.compile(r'^(K|Q|R|B|N)')
+    # endregion Rook
+
+    # region Identify Chessman
+    def CheckPiece(self, movement):
+        pieces = {'k': King, 'b': Bishop, 'q': Queen, 'n': Knight, 'r': Rook}
+        piece_regex = re.compile(r'^(k|q|r|b|n)')
         match = re.search(piece_regex, movement)
-        piece = 'Pawn'
+        piece = Pawn
         if match:
             piece = pieces[match.group()]
-        print(f'Piece -> {piece}')
-        return re.sub(r'^(K|Q|R|B|N)', '', movement)
+        print(f'Piece                      -> {piece}')
+        return re.sub(r'^(k|q|r|b|n)', '', movement), piece
 
-    def CheckCapture(movement):
-        match = re.search(r'^x', movement)
-        capture = 'No'
-        if match:
-            capture = 'Yes'
-            movement = re.sub(r'^x', '', movement) 
-        print(f'Capture -> {capture}')
-        return movement
+    # endregion Identify Chessman
 
-    def DisambiguatingFile(movement):
+    # region Disambiguating Move
+
+    def DisambiguatingX(self, movement):
         # Check for the file of departure before the move
         regex = re.compile(r'^([a-h])(x|[a-h])')
         match = re.search(regex, movement)
-        disambiguating_file = 'No'
+        disambiguating_move = None
         if match:
-            disambiguating_file = match.group(1)
-            movement = re.sub(r'^[a-h]', '', movement) 
-        print(f'Disambiguating File -> {disambiguating_file}')
-        return movement
+            disambiguating_move = ord(match.group(1)) - 96
+            movement = re.sub(r'^[a-h]', '', movement)
+        print(f'Disambiguating X        -> {disambiguating_move}')
+        return movement, disambiguating_move
 
-    def DisambiguatingRank(movement):
+    def DisambiguatingY(self, movement):
         # Check for the rank of departure before the move
         regex = re.compile(r'^([1-8])(x|[a-h])')
         match = re.search(regex, movement)
-        disambiguating_file = 'No'
+        disambiguating_move = None
         if match:
-            disambiguating_file = match.group(1)
-            movement = re.sub(r'^[1-8]', '', movement) 
-        print(f'Disambiguating Rank -> {disambiguating_file}')
-        return movement
+            disambiguating_move = ord(match.group(1))
+            movement = re.sub(r'^[1-8]', '', movement)
+        print(f'Disambiguating Y        -> {disambiguating_move}')
+        return movement, disambiguating_move
 
-    def DisambiguatingFileAndRank(movement):
+    def DisambiguatingXY(self, movement):
         # Check for both the file and rank of departure before the move
         regex = re.compile(r'^([a-h][1-8])(x|[a-h])')
         match = re.search(regex, movement)
-        disambiguating_file = 'No'
+        disambiguating_move = None
         if match:
-            disambiguating_file = match.group(1)
-            movement = re.sub(r'^[a-h][1-8]', '', movement) 
-        print(f'Disambiguating File & Rank -> {disambiguating_file}')
-        return movement
+            disambiguating_move = []
+            disambiguating_move.append(ord(match.group(1)[0]) - 96)
+            disambiguating_move.append(int(match.group(1)[1]))
 
-    def CheckMoving(movement):
-        # Check for move
-        regex = re.compile(r'^[a-h][1-8]')
-        match = re.search(regex, movement)
-        move = 'No'
-        if match:
-            move = match.group()
             movement = re.sub(r'^[a-h][1-8]', '', movement)
-        print(f'Moving -> {move}')
-        return movement
+        print(f'Disambiguating XY -> {disambiguating_move}')
+        return movement, disambiguating_move
 
-    def CheckPromotion(movement):
-        # Check for pawn promote
-        promote_piece = {'K': 'King', 'B': 'Bishop', 'Q': 'Queen', 'N': 'Knight', 'R': 'Rook'}
-        regex = re.compile(r'^=(Q|B|N|R)')
-        match = re.search(regex, movement)
-        promotion = 'No'
-        if match:
-            promotion = promote_piece[match.group(1)]
-            movement = re.sub(r'^=(Q|B|N|R)', '', movement)
-        print(f'Promotion -> {promotion}')
-        return movement
+    def CheckDisambiguating(self, movement):
+        d = ['DisambiguatingX', 'DisambiguatingY', 'DisambiguatingXY']
+        for i in d:
+            movement, disambiguating_move = getattr(self, i)(movement)
+            if disambiguating_move:
+                return movement, disambiguating_move
 
-    def CheckForCheckMove(movement):
-        # Check for checkmate
-        check_ending = {'+': 'Check', '#': 'Checkmate'}
-        regex = re.compile(r'^(\+|\#)')
-        match = re.search(regex, movement)
-        checkmate = 'No'
-        if match:
-            checkmate = check_ending[match.group(1)]
-            movement = re.sub(r'^\+|\#', '', movement) 
-        print(f'Checkmate -> {checkmate}')
-        return movement
-    
-    if __name__ == '__main__':
-        while True:
-            movement = input('Movement :')
-            movement = CheckIfKingRook(movement)
-            movement = CheckPiece(movement)
-            movement = DisambiguatingFile(movement)
-            movement = DisambiguatingRank(movement)
-            movement = DisambiguatingFileAndRank(movement)
-            movement = CheckCapture(movement)
-            movement = CheckMoving(movement)
-            movement = CheckPromotion(movement)
-            movement = CheckForCheckMove(movement)
-            print('')
+
+# endregion Disambiguating Move
+
+manager = Chess_Manager()
+isWhiteTurn = True
+while True:
+    manager.board.print_board()
+    movement = input(f'White turn ? {isWhiteTurn},  Movement : ').lower()
+    print(movement)
+    manager.CheckIfKingRook(movement, isWhiteTurn)
+    movement, piece = manager.CheckPiece(movement)
+    movement = manager.CheckDisambiguating(movement)
+
+    isWhiteTurn = not isWhiteTurn
