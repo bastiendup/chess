@@ -35,6 +35,9 @@ class Board:
         for i in range(8):
             self.board[1][i] = Pawn(1, i, False)
 
+    def update_chessman(self, x, y, new_chessman):
+        self.board[x][y] = new_chessman
+
     def print_board(self):
         """
         Prints the current state of the board.
@@ -42,23 +45,25 @@ class Board:
 
         tmp_str = "\n    "
         for j in range(len(self.board[0])):
-            tmp_str += ("\033[91m " + str(chr(j + 65)) + " \033[0m ")
+            tmp_str += ("\033[91m     " + str(chr(j + 65)) + " \033[0m    ")
         print(tmp_str)
 
         buffer = "   "
-        for i in range(33):
-            buffer += "*"
+        for i in range(8):
+            buffer += "***********"
         print(buffer)
 
         for i in range(len(self.board)):
-            tmp_str = "\033[91m" + f" {str(len(self.board[0])-i)}" + "\033[0m" + " |"
+            tmp_str = "\033[91m" + f"{str(len(self.board[0])-i)}" + "\033[0m" + " |"
             for index, j in enumerate(self.board[i]):
                 if j == None:
                     j = " "
-                tmp_str += (" " + str(j) + " |")
+
+                tmp_str += (" " + f'[{i}][{index}] ' + str(j) + " |")  # str(j)
+
             print(tmp_str)
 
         buffer = "   "
-        for i in range(33):
-            buffer += "*"
+        for i in range(8):
+            buffer += "***********"
         print(buffer + "\n")
