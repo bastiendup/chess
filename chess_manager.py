@@ -1,9 +1,6 @@
-from mimetypes import init
 import re
-from tabnanny import check
 from board import Board
 from chessman import *
-from old.piece import Knight
 
 
 class Chess_Manager:
@@ -83,7 +80,9 @@ class Chess_Manager:
         match = re.search(regex, movement)
         disambiguating_move = None
         if match:
-            disambiguating_move = match.group(1)
+            disambiguating_move = []
+            disambiguating_move.append(match.group(1))
+            disambiguating_move.append(None)
             # disambiguating_move = ord(match.group(1)) - 97
             movement = re.sub(r'^[a-h]', '', movement)
         print(f'Disambiguating X        -> {disambiguating_move}')
@@ -95,7 +94,8 @@ class Chess_Manager:
         match = re.search(regex, movement)
         disambiguating_move = None
         if match:
-            disambiguating_move = match.group(1)
+            disambiguating_move = [None]
+            disambiguating_move.append(match.group(1))
             # disambiguating_move = ord(match.group(1)) - 1
             movement = re.sub(r'^[1-8]', '', movement)
         print(f'Disambiguating Y        -> {disambiguating_move}')
@@ -143,20 +143,15 @@ class Chess_Manager:
 # region Movement
 
     def translate(self, s):
-        try:
-            row = int(s[1])
-            col = s[0]
-            if row < 1 or row > 8:
-                print(s[0] + "is not in the range from 1 - 8")
-                return None
-            if col < 'a' or col > 'h':
-                print(s[1] + "is not in the range from a - h")
-                return None
-            dict = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
-            return (8 - row, dict[col])
-        except:
-            print(s + "is not in the format '[number][letter]'")
-            return None
+        row = int(s[1]) if s[1] is not None else None
+        col = s[0] if s[0] is not None else None
+
+        dict = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
+        if row is None:
+            return (None, dict[col])
+        if col is None:
+            return (8 - row, None)
+        return (8 - row, dict[col])
 
     def CheckMoving(self, movement):
         # Check for move
@@ -230,41 +225,47 @@ class Chess_Manager:
         return chessmans
 
     def identify_chessman(self, chessmans) -> Chessman:
+        possible_chessmans = []
         for chessman in chessmans:
-            moves = chessman.possible_move(self.is_white_turn, self.move)
-            if moves:
-                if not self.disambiguating_move:
+            chessman.compute_possible_move(self.board, self.is_white_turn)
+            if chessman.possible_move:
+                for move in chessman.possible_move:
+                    if move == self.move:
+
+                        # Un peu tordu : si on a pas de disambiguating move, alors le premier chessman qui match c'est forcément lui
+                        if not self.disambiguating_move:
+                            initial_position = chessman.position
+                            chessman.position = self.move
+                            return chessman, initial_position
+
+                        possible_chessmans.append(chessman)
+                        continue
+
+        if self.disambiguating_move[0] is None:
+            for chessman in possible_chessmans:
+                if chessman.position[1] == self.disambiguating_move[1]:
                     initial_position = chessman.position
-                    chessman.position = moves[0]
+                    chessman.position = self.move
                     return chessman, initial_position
 
-                else:
-                    if self.disambiguating_move[0] is None:
-                        for move in moves:
-                            if move[1] == self.disambiguating_move[1]:
-                                initial_position = chessman.position
+        if self.disambiguating_move[1] is None:
+            for chessman in possible_chessmans:
+                if chessman.position[0] == self.disambiguating_move[0]:
+                    initial_position = chessman.position
+                    chessman.position = self.move
+                    return chessman, initial_position
 
-                                chessman.position = move
-                                return chessman, initial_position
-                    elif self.disambiguating_move[1] is None:
-                        for move in moves:
-                            if move[0] == self.disambiguating_move[0]:
-                                initial_position = chessman.position
-
-                                chessman.position = move
-                                return chessman, initial_position
-                    else:
-                        for move in moves:
-                            if move[0] == self.disambiguating_move[0] and move[1] == self.disambiguating_move[1]:
-                                initial_position = chessman.position
-
-                                chessman.position = move
-                                return chessman, initial_position
-        return None, None
+        for chessman in possible_chessmans:
+            if chessman.position == self.disambiguating_move:
+                initial_position = chessman.position
+                chessman.position = self.move
+                return chessman, initial_position
 
     def update_board(self):
         chessmans = self.find_possible_chessman()
         chessman, initial_position = self.identify_chessman(chessmans)
+
+        # Reset chessman initial position on board, and set is new position
         self.board.update_chessman(initial_position[0], initial_position[1], None)
         self.board.update_chessman(self.move[0], self.move[1], chessman)
 

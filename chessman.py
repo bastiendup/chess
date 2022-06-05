@@ -9,14 +9,16 @@ class Chessman:
         self.position = (x, y)
         self.isWhite = isWhite
         self.name = ""
+        self.possible_move = None
 
     def __str__(self):
+        colorize = '\033[94m'
         if self.isWhite:
-            return self.name
-        else:
-            return '\033[94m' + self.name + '\033[0m'
+            colorize = ''
 
-    def possible_move(self, isWhiteTurn, target_position) -> list:
+        return f'{colorize} {self.name} {self.position} {colorize}'
+
+    def compute_possible_move(self, board, isWhiteTurn) -> list:
         pass
 
 
@@ -30,27 +32,45 @@ class Pawn(Chessman):
     def promote(target: Chessman):
         pass
 
-    def possible_move(self, isWhiteTurn, target_position) -> list:
-        moves = None
-        inversor = 1 if isWhiteTurn else -1
+    def compute_possible_move(self, board, isWhiteTurn) -> list:
+        self.possible_move = None
+        inversor = -1 if isWhiteTurn else 1
 
         # If first move, pawn can move forward twice
         if self.first_move:
-            possible_x = target_position[0] + 2 * inversor
-            possible_y = target_position[1]
-            if self.position[0] == possible_x and self.position[1] == possible_y:
-                moves = []
-                moves.append((possible_x, possible_y))
+            possible_x = self.position[0] + 2 * inversor
+            possible_y = self.position[1]
+            # Check there is no chessman in the path
+            if board.board[possible_x - inversor][possible_y] == None:
+                self.possible_move = []
+                self.possible_move.append((possible_x, possible_y))
 
         # Else pawn can move forward once
-        possible_x = target_position[0] + 1 * inversor
-        possible_y = target_position[1]
-        if self.position[0] == possible_x and self.position[1] == possible_y:
-            if not moves:
-                moves = []
-            moves.append((possible_x, possible_y))
-        print(f'{self} -> possible_moves : {moves}')
-        return moves
+        possible_x = self.position[0] + inversor
+        possible_y = self.position[1]
+        # Check there is no chessman in the path
+        if board.board[possible_x][possible_y] == None:
+            if not self.possible_move:
+                self.possible_move = []
+            self.possible_move.append((possible_x, possible_y))
+
+        # Diagonal left
+        possible_x = self.position[0] + inversor
+        possible_y = self.position[1] - 1
+        if board.board[possible_x][possible_y] != None:
+            if not self.possible_move:
+                self.possible_move = []
+            self.possible_move.append((possible_x, possible_y))
+
+        # Diagonal right
+        possible_x = self.position[0] + inversor
+        possible_y = self.position[1] - 1
+        if board.board[possible_x][possible_y] != None:
+            if not self.possible_move:
+                self.possible_move = []
+            self.possible_move.append((possible_x, possible_y))
+
+        print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Rook(Chessman):
@@ -60,11 +80,45 @@ class Rook(Chessman):
         self.name = "R"
 
 
-class Knigth(Chessman):
+class Knight(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
         self.name = "N"
+
+    def knight_move(self, target_x, target_y, board, is_white_turn):
+
+        x = self.position[0] + target_x
+        y = self.position[1] + target_y
+        if (x >= 0 and x < 8 and y >= 0 and y < 8):
+            if board.board[x][y] is None or board.board[x][y].isWhite is not is_white_turn:
+                if not self.possible_move:
+                    self.possible_move = []
+                self.possible_move.append((x, y))
+
+    def compute_possible_move(self, board, isWhiteTurn) -> list:
+        self.possible_move = None
+        # UpLeft
+        self.knight_move(-2, -1, board, isWhiteTurn)
+        # UpRight
+        self.knight_move(-2, 1, board, isWhiteTurn)
+
+        # RightUp
+        self.knight_move(-1, 2, board, isWhiteTurn)
+        # RoghtDown
+        self.knight_move(+1, 2, board, isWhiteTurn)
+
+        # DownRight
+        self.knight_move(2, 1, board, isWhiteTurn)
+        # DownLeft
+        self.knight_move(2, -1, board, isWhiteTurn)
+
+        # LeftDown
+        self.knight_move(-1, -2, board, isWhiteTurn)
+        # LeftUp
+        self.knight_move(1, -2, board, isWhiteTurn)
+
+        print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Bishop(Chessman):
