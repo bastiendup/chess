@@ -47,8 +47,8 @@ class Chess_Manager:
 
     def CheckIfKingRook(self, movement):
         color = 'white' if self.is_white_turn else 'black'
-        possible_rooks = {'o-o': 'king_side_rook_', 'o-o-o': 'queen_side_rook_'}
-        king_rook_regex = re.compile(r'(o-o)(-o)?')
+        possible_rooks = {'O-O': 'king_side_rook_', 'O-O-O': 'queen_side_rook_'}
+        king_rook_regex = re.compile(r'(O-O)(-O)?')
         rook = False
         match = re.search(king_rook_regex, movement)
         if match:
@@ -60,15 +60,15 @@ class Chess_Manager:
 
     # region Identify Chessman
     def check_piece(self, movement):
-        pieces = {'k': King, 'b': Bishop, 'q': Queen, 'n': Knight, 'r': Rook}
-        piece_regex = re.compile(r'^(k|q|r|b|n)')
+        pieces = {'K': King, 'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
+        piece_regex = re.compile(r'^(K|Q|R|B|N)')
         match = re.search(piece_regex, movement)
         piece = Pawn
         if match:
             piece = pieces[match.group()]
         print(f'Piece                      -> {piece}')
         self.chessman = piece
-        return re.sub(r'^(k|q|r|b|n)', '', movement)
+        return re.sub(r'^(K|Q|R|B|N)', '', movement)
 
     # endregion Identify Chessman
 
@@ -132,7 +132,7 @@ class Chess_Manager:
         match = re.search(r'^x', movement)
         capture = False
         if match:
-            capture = False
+            capture = True
             movement = re.sub(r'^x', '', movement)
         print(f'Capture                    -> {capture}')
         self.capture = capture
@@ -174,13 +174,13 @@ class Chess_Manager:
 
     def CheckPromotion(self, movement):
         # Check for pawn promote
-        promote_piece = {'K': King, 'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
-        regex = re.compile(r'^=(q|b|n|r)')
+        promote_piece = {'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
+        regex = re.compile(r'^=(Q|B|N|R)')
         match = re.search(regex, movement)
         promotion = False
         if match:
             promotion = promote_piece[match.group(1)]
-            movement = re.sub(r'^=(q|b|n|r)', '', movement)
+            movement = re.sub(r'^=(Q|B|N|R)', '', movement)
         print(f'Promotion                  -> {promotion}')
         self.promotion = promotion
         return movement
@@ -261,15 +261,42 @@ class Chess_Manager:
                 chessman.position = self.move
                 return chessman, initial_position
 
+    def identify_captured_chessman(self):
+        if not self.capture: return None
+        return self.board.board[self.move[0]][self.move[1]]
+
     def update_board(self):
+
+        captured_chessman = self.identify_captured_chessman()
         chessmans = self.find_possible_chessman()
         chessman, initial_position = self.identify_chessman(chessmans)
+        chessman.first_move = False
+
+        # Promotion
+        if self.promotion:
+            if self.promotion == Queen:
+                promoted_chessman = Queen(chessman.position[0], chessman.position[1], chessman.isWhite)
+                chessman = promoted_chessman
+            if self.promotion == Rook:
+                promoted_chessman = Rook(chessman.position[0], chessman.position[1], chessman.isWhite)
+                chessman = promoted_chessman
+            if self.promotion == Bishop:
+                promoted_chessman = Bishop(chessman.position[0], chessman.position[1], chessman.isWhite)
+                chessman = promoted_chessman
+            if self.promotion == Knight:
+                promoted_chessman = Knight(chessman.position[0], chessman.position[1], chessman.isWhite)
+                chessman = promoted_chessman
 
         # Reset chessman initial position on board, and set is new position
         self.board.update_chessman(initial_position[0], initial_position[1], None)
         self.board.update_chessman(self.move[0], self.move[1], chessman)
 
-        print(f'chess man : {chessman.name}, pos : {chessman.position}')
+        print(f'Chessman : {chessman.name}, at position {chessman.position}')
+        print(f'Capture : {captured_chessman}')
+
+        # Print if check or checkmate
+        if self.checkmate:
+            print(f'{self.checkmate}')
 
 
 # endregion UpdateBoard
@@ -278,8 +305,7 @@ manager = Chess_Manager()
 while True:
     manager.is_white_turn = not manager.is_white_turn
     manager.board.print_board()
-    movement = input(f'White turn ? {manager.is_white_turn},  Movement : ').lower()
-    print(movement)
+    movement = input(f'White turn ? {manager.is_white_turn},  Movement : ')
     rook = manager.CheckIfKingRook(movement)
     if rook: continue
     movement = manager.check_piece(movement)
