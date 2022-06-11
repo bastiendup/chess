@@ -1,3 +1,4 @@
+import sys
 from chessman import *
 
 
@@ -40,7 +41,41 @@ class Board:
 
     def print_board(self):
         """
-        Prints the current state of the board.
+         Prints the current state of the board.
+
+         precondition : chessman should return this for __str__ : f'{colorize}{self.name}{colorize}'
+         """
+
+        tmp_str = "\n    "
+        for j in range(len(self.board[0])):
+            tmp_str += ("\033[91m " + str(chr(j + 65)) + " \033[0m ")
+        print(tmp_str)
+
+        buffer = "   "
+        for i in range(33):
+            buffer += "*"
+        print(buffer)
+
+        for i in range(len(self.board)):
+            tmp_str = "\033[91m" + f" {str(len(self.board[0])-i)}" + "\033[0m" + " |"
+            for index, j in enumerate(self.board[i]):
+                if j == None:
+                    j = " "
+                tmp_str += (" " + str(j) + " |")
+            print(tmp_str)
+
+        buffer = "   "
+        for i in range(33):
+            buffer += "*"
+        print(buffer + "\n")
+
+        sys.stdout.write("\033[F" * 14)  # Cursor up 14 lines
+
+    def print_board_with_coordinates(self):
+        """
+        Prints the current state of the board with chessman coordinates.
+        
+        precondition : chessman should return this for __str__ : f'{colorize} {self.name} {self.position} {colorize}'
         """
 
         tmp_str = "\n    "
@@ -67,3 +102,5 @@ class Board:
         for i in range(8):
             buffer += "***********"
         print(buffer + "\n")
+
+        sys.stdout.write("\033[F" * 14)  # Cursor up 14 lines

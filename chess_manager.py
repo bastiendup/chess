@@ -1,4 +1,5 @@
 import re
+import sys
 from board import Board
 from chessman import *
 
@@ -14,7 +15,20 @@ class Chess_Manager:
         self.promotion = None
         self.checkmate = None
         self.is_white_turn = False
+        self.final_score = None
 
+    # region Score
+
+    def check_final_score(self, movement):
+        possible_scores = {'1/2-1/2': 'DRAW', '1-0': 'WHITE WINS', '0-1': 'BLACK WINS', '*': 'INTERRUPTED GAME'}
+        final_score_regex = re.compile(r'\d-\d|\*|1/2-1/2')
+        match = re.search(final_score_regex, movement)
+        if match:
+            self.final_score = possible_scores[match.group()]
+
+        return self.final_score
+
+    # end region Score
     # region Rook
 
     def king_side_rook_white(self):
@@ -27,8 +41,8 @@ class Chess_Manager:
     def queen_side_rook_white(self):
         b = self.board.board
         b[7][0] = None
-        b[7][3] = Rook(7, 5, True)
-        b[7][2] = King(7, 6, True)
+        b[7][3] = Rook(7, 3, True)
+        b[7][2] = King(7, 2, True)
         b[7][4] = None
 
     def king_side_rook_black(self):
@@ -41,8 +55,8 @@ class Chess_Manager:
     def queen_side_rook_black(self):
         b = self.board.board
         b[0][0] = None
-        b[0][3] = Rook(0, 5, False)
-        b[0][2] = King(0, 6, False)
+        b[0][3] = Rook(0, 3, False)
+        b[0][2] = King(0, 2, False)
         b[0][4] = None
 
     def CheckIfKingRook(self, movement):
@@ -66,7 +80,7 @@ class Chess_Manager:
         piece = Pawn
         if match:
             piece = pieces[match.group()]
-        print(f'Piece                      -> {piece}')
+        # print(f'Piece                      -> {piece}')
         self.chessman = piece
         return re.sub(r'^(K|Q|R|B|N)', '', movement)
 
@@ -85,7 +99,7 @@ class Chess_Manager:
             disambiguating_move.append(None)
             # disambiguating_move = ord(match.group(1)) - 97
             movement = re.sub(r'^[a-h]', '', movement)
-        print(f'Disambiguating X        -> {disambiguating_move}')
+        # print(f'Disambiguating X        -> {disambiguating_move}')
         return movement, disambiguating_move
 
     def DisambiguatingY(self, movement):
@@ -98,7 +112,7 @@ class Chess_Manager:
             disambiguating_move.append(match.group(1))
             # disambiguating_move = ord(match.group(1)) - 1
             movement = re.sub(r'^[1-8]', '', movement)
-        print(f'Disambiguating Y        -> {disambiguating_move}')
+        # print(f'Disambiguating Y        -> {disambiguating_move}')
         return movement, disambiguating_move
 
     def DisambiguatingXY(self, movement):
@@ -113,11 +127,12 @@ class Chess_Manager:
             # disambiguating_move.append(int(match.group(1)[1]) - 1)
 
             movement = re.sub(r'^[a-h][1-8]', '', movement)
-        print(f'Disambiguating XY -> {disambiguating_move}')
+        # print(f'Disambiguating XY -> {disambiguating_move}')
         return movement, disambiguating_move
 
     def CheckDisambiguating(self, movement):
         d = ['DisambiguatingX', 'DisambiguatingY', 'DisambiguatingXY']
+        self.disambiguating_move = None
         for i in d:
             movement, disambiguating_move = getattr(self, i)(movement)
             if disambiguating_move:
@@ -134,7 +149,7 @@ class Chess_Manager:
         if match:
             capture = True
             movement = re.sub(r'^x', '', movement)
-        print(f'Capture                    -> {capture}')
+        # print(f'Capture                    -> {capture}')
         self.capture = capture
         return movement
 
@@ -163,7 +178,7 @@ class Chess_Manager:
             # move.append(ord(match.group()[0]) - 97)
             # move.append(int(match.group()[1]) - 1)
             movement = re.sub(r'^[a-h][1-8]', '', movement)
-        print(f'Moving                     -> {move}')
+        # print(f'Moving                     -> {move}')
 
         self.move = self.translate(move)
         return movement
@@ -181,7 +196,7 @@ class Chess_Manager:
         if match:
             promotion = promote_piece[match.group(1)]
             movement = re.sub(r'^=(Q|B|N|R)', '', movement)
-        print(f'Promotion                  -> {promotion}')
+        # print(f'Promotion                  -> {promotion}')
         self.promotion = promotion
         return movement
 
@@ -198,7 +213,7 @@ class Chess_Manager:
         if match:
             checkmate = check_ending[match.group(1)]
             movement = re.sub(r'^\+|\#', '', movement)
-        print(f'Checkmate                  -> {checkmate}')
+        # print(f'Checkmate                  -> {checkmate}')
         self.checkmate = checkmate
         return movement
 
@@ -221,7 +236,7 @@ class Chess_Manager:
                 tmp.append(i)
         chessmans = tmp
 
-        print(f'chessmans : {chessmans}')
+        # print(f'chessmans : {chessmans}')
         return chessmans
 
     def identify_chessman(self, chessmans) -> Chessman:
@@ -291,28 +306,21 @@ class Chess_Manager:
         self.board.update_chessman(initial_position[0], initial_position[1], None)
         self.board.update_chessman(self.move[0], self.move[1], chessman)
 
-        print(f'Chessman : {chessman.name}, at position {chessman.position}')
-        print(f'Capture : {captured_chessman}')
+        # print(f'Chessman : {chessman.name}, at position {chessman.position}')
+        # print(f'Capture : {captured_chessman}')
 
         # Print if check or checkmate
-        if self.checkmate:
-            print(f'{self.checkmate}')
+        #if self.checkmate:
+        # print(f'{self.checkmate}')
 
 
 # endregion UpdateBoard
 
-manager = Chess_Manager()
-while True:
-    manager.is_white_turn = not manager.is_white_turn
-    manager.board.print_board()
-    movement = input(f'White turn ? {manager.is_white_turn},  Movement : ')
-    rook = manager.CheckIfKingRook(movement)
-    if rook: continue
-    movement = manager.check_piece(movement)
-    movement = manager.CheckDisambiguating(movement)
-    movement = manager.CheckCapture(movement)
-    movement = manager.CheckMoving(movement)
-    movement = manager.CheckPromotion(movement)
-    movement = manager.CheckForCheckMove(movement)
-
-    manager.update_board()
+    def reset_turn(self):
+        self.chessman = None
+        self.disambiguating_move = None
+        self.capture = None
+        self.move = None
+        self.promotion = None
+        self.checkmate = None
+        self.final_score_turn = False

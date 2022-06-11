@@ -12,7 +12,7 @@ class Chessman:
         if self.isWhite:
             colorize = ''
 
-        return f'{colorize} {self.name} {self.position} {colorize}'
+        return f'{colorize}{self.name}\033[0m'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         pass
@@ -37,39 +37,43 @@ class Pawn(Chessman):
         if self.first_move:
             possible_x = self.position[0] + 2 * inversor
             possible_y = self.position[1]
-            # Check there is no chessman in the path
-            if board.board[possible_x - inversor][possible_y] == None:
-                # self.possible_move = []
-                self.possible_move.append((possible_x, possible_y))
+            if possible_x < 8 and possible_x >= 0:
+                # Check there is no chessman in the path
+                if board.board[possible_x - inversor][possible_y] == None:
+                    # self.possible_move = []
+                    self.possible_move.append((possible_x, possible_y))
 
         # Else pawn can move forward once
         possible_x = self.position[0] + inversor
         possible_y = self.position[1]
-        # Check there is no chessman in the path
-        if board.board[possible_x][possible_y] == None:
-            # if not self.possible_move:
-            #     self.possible_move = []
-            self.possible_move.append((possible_x, possible_y))
+        if possible_x < 8 and possible_x >= 0:
+            # Check there is no chessman in the path
+            if board.board[possible_x][possible_y] == None:
+                # if not self.possible_move:
+                #     self.possible_move = []
+                self.possible_move.append((possible_x, possible_y))
 
         # Diagonal left
         possible_x = self.position[0] + inversor
         possible_y = self.position[1] - 1
-        if board.board[possible_x][possible_y] is not None and board.board[possible_x][
-                possible_y].isWhite is not isWhiteTurn:
-            # if not self.possible_move:
-            #     self.possible_move = []
-            self.possible_move.append((possible_x, possible_y))
+        if possible_y >= 0 and possible_x < 8 and possible_x >= 0:
+            if board.board[possible_x][possible_y] is not None and board.board[possible_x][
+                    possible_y].isWhite is not isWhiteTurn:
+                # if not self.possible_move:
+                #     self.possible_move = []
+                self.possible_move.append((possible_x, possible_y))
 
         # Diagonal right
         possible_x = self.position[0] + inversor
         possible_y = self.position[1] + 1
-        if board.board[possible_x][possible_y] is not None and board.board[possible_x][
-                possible_y].isWhite is not isWhiteTurn:
-            # if not self.possible_move:
-            #     self.possible_move = []
-            self.possible_move.append((possible_x, possible_y))
+        if possible_y < 8 and possible_x < 8 and possible_x >= 0:
+            if board.board[possible_x][possible_y] is not None and board.board[possible_x][
+                    possible_y].isWhite is not isWhiteTurn:
+                # if not self.possible_move:
+                #     self.possible_move = []
+                self.possible_move.append((possible_x, possible_y))
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Rook(Chessman):
@@ -87,7 +91,7 @@ class Rook(Chessman):
         y = self.position[1]
         while True:
             x -= 1
-            if x > 7: break
+            if x < 0: break
             if board.board[x][y] is None:
                 self.possible_move.append((x, y))
 
@@ -137,7 +141,7 @@ class Rook(Chessman):
                     self.possible_move.append((x, y))
                 break
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Knight(Chessman):
@@ -180,7 +184,7 @@ class Knight(Chessman):
         # LeftUp
         self.knight_move(1, -2, board, isWhiteTurn)
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Bishop(Chessman):
@@ -199,7 +203,7 @@ class Bishop(Chessman):
         while True:
             x -= 1
             y -= 1
-            if x < 0 or y > 7:
+            if x < 0 or y < 0:
                 break
 
             if board.board[x][y] is None:
@@ -233,7 +237,7 @@ class Bishop(Chessman):
         while True:
             x += 1
             y += 1
-            if x < 0 or y > 7:
+            if x > 7 or y > 7:
                 break
 
             if board.board[x][y] is None:
@@ -250,7 +254,7 @@ class Bishop(Chessman):
         while True:
             x += 1
             y -= 1
-            if x < 0 or y > 7:
+            if x > 7 or y < 0:
                 break
 
             if board.board[x][y] is None:
@@ -261,7 +265,7 @@ class Bishop(Chessman):
                     self.possible_move.append((x, y))
                 break
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class Queen(Chessman):
@@ -280,7 +284,7 @@ class Queen(Chessman):
         y = self.position[1]
         while True:
             x -= 1
-            if x > 7: break
+            if x < 0: break
             if board.board[x][y] is None:
                 self.possible_move.append((x, y))
 
@@ -338,7 +342,7 @@ class Queen(Chessman):
         while True:
             x -= 1
             y -= 1
-            if x < 0 or y > 7:
+            if x < 0 or y < 0:
                 break
 
             if board.board[x][y] is None:
@@ -372,7 +376,7 @@ class Queen(Chessman):
         while True:
             x += 1
             y += 1
-            if x < 0 or y > 7:
+            if x > 7 or y > 7:
                 break
 
             if board.board[x][y] is None:
@@ -389,7 +393,7 @@ class Queen(Chessman):
         while True:
             x += 1
             y -= 1
-            if x < 0 or y > 7:
+            if x > 7 or y < 0:
                 break
 
             if board.board[x][y] is None:
@@ -401,7 +405,7 @@ class Queen(Chessman):
                 break
         # end region Bishop Behavior
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
 
 
 class King(Chessman):
@@ -460,4 +464,4 @@ class King(Chessman):
             elif board.board[x][y].isWhite is not isWhiteTurn:
                 self.possible_move.append((x, y))
 
-        print(f'{self} -> possible_moves : {self.possible_move}')
+        # print(f'{self} -> possible_moves : {self.possible_move}')
