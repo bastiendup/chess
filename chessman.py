@@ -425,7 +425,7 @@ class King(Chessman):
         if x >= 0:
             for k in range(3):
                 # If we're not on the edge
-                if y >= 0 or y < 8:
+                if y >= 0 and y < 8:
                     if board.board[x][y] is None:
                         self.possible_move.append((x, y))
                     elif board.board[x][y].isWhite is not isWhiteTurn:
@@ -439,7 +439,7 @@ class King(Chessman):
         if x < 8:
             for k in range(3):
                 # If we're not on the edge
-                if y >= 0 or y < 8:
+                if y >= 0 and y < 8:
                     if board.board[x][y] is None:
                         self.possible_move.append((x, y))
                     elif board.board[x][y].isWhite is not isWhiteTurn:
