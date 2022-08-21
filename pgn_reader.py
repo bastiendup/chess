@@ -24,7 +24,7 @@ for move in moves:
         continue
     for movement in move.split():
         manager.reset_turn()
-        time.sleep(.1)
+        time.sleep(.15)
         manager.is_white_turn = not manager.is_white_turn
         sys.stdout.write("\x1b[2K")  # Delete line before writing it : avoid having the previous move written
         color = 'white' if manager.is_white_turn else 'black'
@@ -38,8 +38,8 @@ for move in moves:
             print(f'              {final_score}')
             break
 
-        rook = manager.CheckIfKingRook(movement)
-        if not rook:
+        manager.CheckIfKingRook(movement)
+        if not manager.rook:
             movement = manager.check_piece(movement)
             movement = manager.CheckDisambiguating(movement)
             movement = manager.CheckCapture(movement)

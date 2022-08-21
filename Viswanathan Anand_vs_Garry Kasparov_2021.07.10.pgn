@@ -1,13 +1,21 @@
-[Event "Grand Chess Tour Croatia Rapid & Blitz 2021"]
-[Site ""]
-[Date "2021.07.10"]
-[Round "?"]
-[White "Viswanathan Anand"]
-[Black "Garry Kasparov"]
-[Result "1-0"]
+[Event "Man-Machine"]
+[Site "London ENG"]
+[Date "2005.06.22"]
+[Round "2"]
+[White "Adams,Mi"]
+[Black "HYDRA"]
+[Result "1/2-1/2"]
+[WhiteElo "2737"]
+[BlackElo ""]
+[ECO "B47"]
 
-1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 6. Bg5 e6 7. f4 Qc7 8. Bxf6
-gxf6 9. Qf3 b5 10. a3 Nc6 11. O-O-O Nxd4 12. Rxd4 Qc5 13. Rd3 Rb8 14. b4 Qa7 15.
-f5 a5 16. Na2 Be7 17. Be2 h5 18. Kb1 Bd7 19. Rhd1 h4 20. bxa5 Qxa5 21. Nb4 Rc8
-22. Qg4 Kf8 23. fxe6 Bxe6 24. Qf3 Rc5 25. Qe3 f5 26. Bf3 fxe4 27. Bxe4 Rc4 28.
-Bd5 Bf6 29. Bxc4 bxc4 30. Rxd6 1-0
+1.e4 c5 2.Nc3 e6 3.Nf3 Nc6 4.d4 cxd4 5.Nxd4 Qc7 6.g3 a6 7.Bg2 d6 8.Nxc6 bxc6
+9.O-O Nf6 10.Na4 e5 11.c4 Be7 12.Be3 Be6 13.Rc1 O-O 14.b3 Qb7 15.Qe2 Rfe8
+16.h3 Rab8 17.Rfd1 Bf8 18.Kh2 h6 19.Rc2 Be7 20.Bc1 Qc7 21.Bb2 Nd7 22.Bc3 Nf8
+23.Qe3 c5 24.Bb2 Bd7 25.Nc3 Ne6 26.Nd5 Qd8 27.f4 Nd4 28.Rf2 Bc6 29.fxe5 dxe5
+30.Bxd4 cxd4 31.Qf3 Rf8 32.Qh5 f6 33.h4 Be8 34.Qf3 Bf7 35.Bh3 Rb7 36.h5 a5
+37.Kg2 Qe8 38.Bg4 Bc5 39.Rh1 Qc6 40.Rb2 Rfb8 41.Bf5 Kh8 42.Rhb1 Qe8 43.g4 Qc6
+44.Qd3 Bg8 45.Qd1 Qa6 46.Rd2 a4 47.Rdb2 Qa8 48.Kh2 Bf7 49.Kg2 Bf8 50.Kh2 Be8
+51.b4 a3 52.Rb3 Ba4 53.b5 Qa7 54.Kg2 Qc5 55.Qd3 Bxb3 56.Qxb3 Ra8 57.Rd1 Qd6
+58.Rc1 Qb8 59.Kf3 Bd6 60.Ke2 Bc5 61.Kd3 Qa7 62.Rb1 Qa5 63.Qc2 Qd8 64.Rh1 Qd6
+65.Qb3 Re8  1/2-1/2

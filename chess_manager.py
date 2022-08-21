@@ -6,19 +6,20 @@ from chessman import *
 
 class Chess_Manager:
 
-    def __init__(self) -> None:
+    def __init__(self):
         self.board = Board()
+        self.movement = None
         self.chessman = None
         self.disambiguating_move = None
         self.capture = None
-        self.move = None
+        self.current_move = None
         self.promotion = None
         self.checkmate = None
         self.is_white_turn = False
         self.final_score = None
+        self.rook = None
 
     # region Score
-
     def check_final_score(self, movement):
         possible_scores = {'1/2-1/2': 'DRAW', '1-0': 'WHITE WINS', '0-1': 'BLACK WINS', '*': 'INTERRUPTED GAME'}
         final_score_regex = re.compile(r'\d-\d|\*|1/2-1/2')
@@ -27,10 +28,9 @@ class Chess_Manager:
             self.final_score = possible_scores[match.group()]
 
         return self.final_score
-
     # end region Score
-    # region Rook
 
+    # region Rook
     def king_side_rook_white(self):
         b = self.board.board
         b[7][4] = None
@@ -63,13 +63,10 @@ class Chess_Manager:
         color = 'white' if self.is_white_turn else 'black'
         possible_rooks = {'O-O': 'king_side_rook_', 'O-O-O': 'queen_side_rook_'}
         king_rook_regex = re.compile(r'(O-O)(-O)?')
-        rook = False
         match = re.search(king_rook_regex, movement)
         if match:
             rook = possible_rooks[match.group()] + color
             getattr(self, rook)()
-        return rook
-
     # endregion Rook
 
     # region Identify Chessman
@@ -83,13 +80,11 @@ class Chess_Manager:
         # print(f'Piece                      -> {piece}')
         self.chessman = piece
         return re.sub(r'^(K|Q|R|B|N)', '', movement)
-
     # endregion Identify Chessman
 
-    # region Disambiguating Move
-
+    # region Disambiguating current_move
     def DisambiguatingX(self, movement):
-        # Check for the file of departure before the move
+        # Check for the file of departure before the current_move
         regex = re.compile(r'^([a-h])(x|[a-h])')
         match = re.search(regex, movement)
         disambiguating_move = None
@@ -103,7 +98,7 @@ class Chess_Manager:
         return movement, disambiguating_move
 
     def DisambiguatingY(self, movement):
-        # Check for the rank of departure before the move
+        # Check for the rank of departure before the current_move
         regex = re.compile(r'^([1-8])(x|[a-h])')
         match = re.search(regex, movement)
         disambiguating_move = None
@@ -116,7 +111,7 @@ class Chess_Manager:
         return movement, disambiguating_move
 
     def DisambiguatingXY(self, movement):
-        # Check for both the file and rank of departure before the move
+        # Check for both the file and rank of departure before the current_move
         regex = re.compile(r'^([a-h][1-8])(x|[a-h])')
         match = re.search(regex, movement)
         disambiguating_move = None
@@ -139,7 +134,7 @@ class Chess_Manager:
                 self.disambiguating_move = self.translate(disambiguating_move)
         return movement
 
-# endregion Disambiguating Move
+# endregion Disambiguating current_move
 
 # region Capture
 
@@ -169,18 +164,18 @@ class Chess_Manager:
         return (8 - row, dict[col])
 
     def CheckMoving(self, movement):
-        # Check for move
+        # Check for current_move
         regex = re.compile(r'^[a-h][1-8]')
         match = re.search(regex, movement)
-        move = None
+        current_move = None
         if match:
-            move = match.group()
-            # move.append(ord(match.group()[0]) - 97)
-            # move.append(int(match.group()[1]) - 1)
+            current_move = match.group()
+            # current_move.append(ord(match.group()[0]) - 97)
+            # current_move.append(int(match.group()[1]) - 1)
             movement = re.sub(r'^[a-h][1-8]', '', movement)
-        # print(f'Moving                     -> {move}')
+        # print(f'Moving                     -> {current_move}')
 
-        self.move = self.translate(move)
+        self.current_move = self.translate(current_move)
         return movement
 
 # endregion Movement
@@ -244,13 +239,13 @@ class Chess_Manager:
         for chessman in chessmans:
             chessman.compute_possible_move(self.board, self.is_white_turn)
             if chessman.possible_move:
-                for move in chessman.possible_move:
-                    if move == self.move:
+                for current_move in chessman.possible_move:
+                    if current_move == self.current_move:
 
-                        # Un peu tordu : si on a pas de disambiguating move, alors le premier chessman qui match c'est forcément lui
+                        # Un peu tordu : si on a pas de disambiguating current_move, alors le premier chessman qui match c'est forcément lui
                         if not self.disambiguating_move:
                             initial_position = chessman.position
-                            chessman.position = self.move
+                            chessman.position = self.current_move
                             return chessman, initial_position
 
                         possible_chessmans.append(chessman)
@@ -260,25 +255,25 @@ class Chess_Manager:
             for chessman in possible_chessmans:
                 if chessman.position[1] == self.disambiguating_move[1]:
                     initial_position = chessman.position
-                    chessman.position = self.move
+                    chessman.position = self.current_move
                     return chessman, initial_position
 
         if self.disambiguating_move[1] is None:
             for chessman in possible_chessmans:
                 if chessman.position[0] == self.disambiguating_move[0]:
                     initial_position = chessman.position
-                    chessman.position = self.move
+                    chessman.position = self.current_move
                     return chessman, initial_position
 
         for chessman in possible_chessmans:
             if chessman.position == self.disambiguating_move:
                 initial_position = chessman.position
-                chessman.position = self.move
+                chessman.position = self.current_move
                 return chessman, initial_position
 
     def identify_captured_chessman(self):
         if not self.capture: return None
-        return self.board.board[self.move[0]][self.move[1]]
+        return self.board.board[self.current_move[0]][self.current_move[1]]
 
     def update_board(self):
 
@@ -303,8 +298,7 @@ class Chess_Manager:
                 chessman = promoted_chessman
 
         # Reset chessman initial position on board, and set is new position
-        self.board.update_chessman(initial_position[0], initial_position[1], None)
-        self.board.update_chessman(self.move[0], self.move[1], chessman)
+        self.board.update_chessman(initial_position, self.current_move, chessman)
 
         # print(f'Chessman : {chessman.name}, at position {chessman.position}')
         # print(f'Capture : {captured_chessman}')
@@ -320,7 +314,7 @@ class Chess_Manager:
         self.chessman = None
         self.disambiguating_move = None
         self.capture = None
-        self.move = None
+        self.current_move = None
         self.promotion = None
         self.checkmate = None
         self.final_score_turn = False

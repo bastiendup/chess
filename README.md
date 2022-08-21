@@ -1,3 +1,5 @@
-# Chess
+# Launch
 
-Simple chess
+```sh
+python3 pgn_reader.py
+```

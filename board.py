@@ -36,8 +36,9 @@ class Board:
         for i in range(8):
             self.board[1][i] = Pawn(1, i, False)
 
-    def update_chessman(self, x, y, new_chessman):
-        self.board[x][y] = new_chessman
+    def update_chessman(self,initial_position:tuple, new_position: tuple, new_chessman: Chessman):
+        self.board[initial_position[0]][initial_position[1]]=None
+        self.board[new_position[0]][new_position[1]] = new_chessman
 
     def print_board(self):
         """
