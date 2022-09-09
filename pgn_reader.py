@@ -29,7 +29,7 @@ for move in moves:
         sys.stdout.write("\x1b[2K")  # Delete line before writing it : avoid having the previous move written
         color = 'white' if manager.is_white_turn else 'black'
         print(f'      MOVEMENT : {movement}, TURN : {color}')
-        manager.board.print_board()
+        manager.board.print_board_with_coordinates()
 
         # movement = input(f'White turn ? {manager.is_white_turn},  Movement : ')
         final_score = manager.check_final_score(movement)

@@ -28,6 +28,7 @@ class Chess_Manager:
             self.final_score = possible_scores[match.group()]
 
         return self.final_score
+
     # end region Score
 
     # region Rook
@@ -67,6 +68,8 @@ class Chess_Manager:
         if match:
             rook = possible_rooks[match.group()] + color
             getattr(self, rook)()
+            self.rook = True
+
     # endregion Rook
 
     # region Identify Chessman
@@ -80,6 +83,7 @@ class Chess_Manager:
         # print(f'Piece                      -> {piece}')
         self.chessman = piece
         return re.sub(r'^(K|Q|R|B|N)', '', movement)
+
     # endregion Identify Chessman
 
     # region Disambiguating current_move
@@ -318,3 +322,4 @@ class Chess_Manager:
         self.promotion = None
         self.checkmate = None
         self.final_score_turn = False
+        self.rook = None

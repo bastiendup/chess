@@ -12,7 +12,7 @@ class Chessman:
         if self.isWhite:
             colorize = ''
 
-        return f'{colorize}{self.name}\033[0m'
+        return f'{colorize} {self.name} {self.position} {colorize}'  #f'{colorize}{self.name}\033[0m'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         pass
