@@ -1,5 +1,4 @@
 import re
-import sys
 from board import Board
 from chessman import *
 
