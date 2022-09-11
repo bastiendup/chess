@@ -3,6 +3,7 @@ import sys
 import time
 
 from chess_manager import Chess_Manager
+from cursor import CURSOR_REWRITE_LINE
 
 with open('Viswanathan Anand_vs_Garry Kasparov_2021.07.10.pgn') as f:
     pgn_game = f.read()
@@ -26,10 +27,10 @@ for move in moves:
         manager.reset_turn()
         time.sleep(.15)
         manager.is_white_turn = not manager.is_white_turn
-        sys.stdout.write("\x1b[2K")  # Delete line before writing it : avoid having the previous move written
+        sys.stdout.write(CURSOR_REWRITE_LINE)  # Delete line before writing it : avoid having the previous move written
         color = 'white' if manager.is_white_turn else 'black'
         print(f'      MOVEMENT : {movement}, TURN : {color}')
-        manager.board.print_board_with_coordinates()
+        manager.board.print_board()
 
         # movement = input(f'White turn ? {manager.is_white_turn},  Movement : ')
         final_score = manager.check_final_score(movement)

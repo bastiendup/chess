@@ -1,5 +1,6 @@
 import sys
 from chessman import *
+from cursor import BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
 
 
 class Board:
@@ -36,73 +37,72 @@ class Board:
         for i in range(8):
             self.board[1][i] = Pawn(1, i, False)
 
-    def update_chessman(self, initial_position: tuple, new_position: tuple,
-                        new_chessman: Chessman):
+    def update_chessman(self, initial_position: tuple, new_position: tuple, new_chessman: Chessman):
         self.board[initial_position[0]][initial_position[1]] = None
         self.board[new_position[0]][new_position[1]] = new_chessman
 
     def print_board(self):
-        """
+        ''''
          Prints the current state of the board.
 
          precondition : chessman should return this for __str__ : f'{colorize}{self.name}{colorize}'
-         """
+         '''
 
-        tmp_str = "\n    "
+        tmp_str = '\n    '
         for j in range(len(self.board[0])):
-            tmp_str += ("\033[91m " + str(chr(j + 65)) + " \033[0m ")
+            tmp_str += (RED + ' ' + str(chr(j + 65)) + '  ')
         print(tmp_str)
 
-        buffer = "   "
-        for i in range(33):
-            buffer += "*"
+        buffer = RESET_CURSOR + '    '
+        for i in range(31):
+            buffer += BUFFER
         print(buffer)
 
         for i in range(len(self.board)):
-            tmp_str = "\033[91m" + f" {str(len(self.board[0])-i)}" + "\033[0m" + " |"
+            tmp_str = f' {RED}{str(len(self.board[0])-i)}{RESET_CURSOR}' + ' |'
             for index, j in enumerate(self.board[i]):
                 if j == None:
-                    j = " "
-                tmp_str += (" " + str(j) + " |")
+                    j = ' '
+                tmp_str += (' ' + str(j) + ' |')
             print(tmp_str)
 
-        buffer = "   "
-        for i in range(33):
-            buffer += "*"
-        print(buffer + "\n")
+        buffer = RESET_CURSOR + '    '
+        for i in range(31):
+            buffer += BUFFER
+        print(buffer + '\n')
 
-        sys.stdout.write("\033[F" * 14)  # Cursor up 14 lines
+        sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines
 
     def print_board_with_coordinates(self):
-        """
+        '''
         Prints the current state of the board with chessman coordinates.
 
-        precondition : chessman should return this for __str__ : f'{colorize} {self.name} {self.position} {colorize}'
-        """
+        precondition : chessman should return this for __str__ : f'{colorize} {self.name} {self.position} {INACTIVE}'
+        '''
 
-        tmp_str = "\n    "
+        tmp_str = '\n    '
         for j in range(len(self.board[0])):
-            tmp_str += ("\033[91m    " + str(chr(j + 65)) + " \033[0m     ")
+            tmp_str += (RED + '    ' + str(chr(j + 65)) + RESET_CURSOR + '      ')
         print(tmp_str)
 
-        buffer = "   "
+        buffer = '   '
         for i in range(8):
-            buffer += "***********"
+            buffer += BUFFER * 11
         print(buffer)
 
         for i in range(len(self.board)):
-            tmp_str = "\033[91m" + f"{str(len(self.board[0])-i)}" + "\033[0m" + " |"
+            tmp_str = RED + f'{str(len(self.board[0])-i)}' + RESET_CURSOR + ' |'
             for index, j in enumerate(self.board[i]):
                 if j == None:
-                    j = f'\033[90m   ({i}, {index}) \033[0m'
+                    j = f'{DARK_GRAY}   ({i}, {index}) {RESET_CURSOR}'
 
-                tmp_str += (str(j) + "|")  # str(j)
+                tmp_str += (str(j) + '|')
 
             print(tmp_str)
 
-        buffer = "   "
+        buffer = '   '
         for i in range(8):
-            buffer += "***********"
-        print(buffer + "\n")
+            buffer += BUFFER * 11
+        print(buffer + '\n')
 
-        sys.stdout.write("\033[F" * 14)  # Cursor up 14 lines
+        sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines

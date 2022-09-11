@@ -1,18 +1,22 @@
+from cursor import BLUE, RESET_CURSOR, WHITE
+
+
 class Chessman:
 
     def __init__(self, x, y, isWhite) -> None:
         self.position = (x, y)
         self.isWhite = isWhite
-        self.name = ""
+        self.name = ''
         self.possible_move = []
         self.first_move = True
 
     def __str__(self):
-        colorize = '\033[94m'
+        colorize = BLUE
         if self.isWhite:
-            colorize = ''
+            colorize = WHITE
 
-        return f'{colorize} {self.name} {self.position} {colorize}'  #f'{colorize}{self.name}\033[0m'
+        return f'{colorize}{self.name}{RESET_CURSOR}'
+        # return f'{colorize} {self.name} {self.position} {self.RESET_COLOR}'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         pass
@@ -22,7 +26,7 @@ class Pawn(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "P"
+        self.name = 'P'
 
     def promote(target: Chessman):
         pass
@@ -80,7 +84,7 @@ class Rook(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "R"
+        self.name = 'R'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         # Reset possible moves
@@ -148,7 +152,7 @@ class Knight(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "N"
+        self.name = 'N'
 
     def knight_move(self, target_x, target_y, board, is_white_turn):
 
@@ -191,7 +195,7 @@ class Bishop(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "B"
+        self.name = 'B'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         # Reset possible moves
@@ -272,7 +276,7 @@ class Queen(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "Q"
+        self.name = 'Q'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         # Reset possible moves
@@ -412,7 +416,7 @@ class King(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
-        self.name = "K"
+        self.name = 'K'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         # Reset possible moves

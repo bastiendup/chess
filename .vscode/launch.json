@@ -8,6 +8,7 @@
             "name": "Python : Fichier actuel",
             "type": "python",
             "request": "launch",
+            // "program": "pgn_reader.py",
             "program": "${file}",
             "console": "integratedTerminal"
         }
