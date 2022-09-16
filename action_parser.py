@@ -12,6 +12,9 @@ class BoardAction:
     end_pos: tuple
     piece: Chessman
 
+    def __repr__(self) -> str:
+        return f'{self.piece} : from {self.start_pos} to {self.end_pos} '
+
 
 @dataclass
 class ParsingResult:
@@ -31,16 +34,16 @@ class ParsingResult:
 class ActionParser:
     ''' Class to parse a movement '''
 
-    FINAL_SCORE_REGEX = re.compile(r'\d-\d|\*|1/2-1/2')
-    ROOK_REGEX = re.compile(r'(O-O)(-O)?')
-    PIECE_REGEX = re.compile(r'^(K|Q|R|B|N)')
-    DISAMBIGUATING_FILE_REGEX = re.compile(r'^([a-h])(x|[a-h])')
-    DISAMBIGUATING_RANK_REGEX = re.compile(r'^([1-8])(x|[a-h])')
-    DISAMBIGUATING_FILE_AND_RANK_REGEX = re.compile(r'^([a-h][1-8])(x|[a-h])')
-    CAPTURE_REGEX = re.compile(r'^x')
-    MOVE_REGEX = re.compile(r'^[a-h][1-8]')
-    PROMOTION_REGEX = re.compile(r'^=(Q|B|N|R)')
-    CHECKMATE_REGEX = re.compile(r'^(\+|\#)')
+    FINAL_SCORE_REGEX =                     re.compile(r'\d-\d|\*|1/2-1/2')
+    ROOK_REGEX =                            re.compile(r'(O-O)(-O)?')
+    PIECE_REGEX =                           re.compile(r'^(K|Q|R|B|N)')
+    DISAMBIGUATING_FILE_REGEX =             re.compile(r'^([a-h])(x|[a-h])')
+    DISAMBIGUATING_RANK_REGEX =             re.compile(r'^([1-8])(x|[a-h])')
+    DISAMBIGUATING_FILE_AND_RANK_REGEX =    re.compile(r'^([a-h][1-8])(x|[a-h])')
+    CAPTURE_REGEX =                         re.compile(r'^x')
+    MOVE_REGEX =                            re.compile(r'^[a-h][1-8]')
+    PROMOTION_REGEX =                       re.compile(r'^=(Q|B|N|R)')
+    CHECKMATE_REGEX =                       re.compile(r'^(\+|\#)')
 
     def __init__(self) -> None:
         self.action = None
@@ -146,8 +149,6 @@ class ActionParser:
         if match:
             pieces = {'K': King, 'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
             self.action = re.sub(self.PIECE_REGEX, '', self.action)
-            print(str(pieces[match.group()]))
-            print(str(Chessman))
             return pieces[match.group()]
         return Pawn
 

@@ -9,3 +9,21 @@ GREEN = '\033[32m'
 BUFFER = '-'
 CURSOR_UP = '\033[F'
 CURSOR_REWRITE_LINE = '\x1b[2K'
+
+PIECE_SET_1={
+    'R': '♖',
+    'N': '♘',
+    'B': '♗',
+    'Q': '♕',
+    'K': '♔',
+    'P': '♙',
+}
+
+PIECE_SET_2={
+    'R': '♜',
+    'N': '♞',
+    'B': '♝',
+    'Q': '♛',
+    'K': '♚',
+    'P': '♟',
+}

@@ -1,4 +1,4 @@
-from cursor import BLUE, RESET_CURSOR, WHITE
+from cursor import BLUE, PIECE_SET_1, PIECE_SET_2, RESET_CURSOR, WHITE
 
 
 class Chessman:
@@ -14,8 +14,9 @@ class Chessman:
         colorize = BLUE
         if self.isWhite:
             colorize = WHITE
+        icon = PIECE_SET_2.get(self.name)
 
-        return f'{colorize}{self.name}{RESET_CURSOR}'
+        return f'{colorize}{icon}{RESET_CURSOR}'
         # return f'{colorize} {self.name} {self.position} {self.RESET_COLOR}'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
@@ -28,7 +29,7 @@ class Pawn(Chessman):
         super().__init__(x, y, isWhite)
         self.name = 'P'
 
-    def promote(target: Chessman):
+    def promote(self, target: Chessman):
         pass
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:

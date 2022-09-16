@@ -28,8 +28,8 @@ for move in moves:
         time.sleep(.15)
         manager.is_white_turn = not manager.is_white_turn
         sys.stdout.write(CURSOR_REWRITE_LINE)  # Delete line before writing it : avoid having the previous move written
-        color = 'white' if manager.is_white_turn else 'black'
-        print(f'      MOVEMENT : {movement}, TURN : {color}')
+        player = 'White' if manager.is_white_turn else 'Black'
+        print(f'       ACTION : {movement}, TURN : {player}')
         manager.board.print_board()
 
         # movement = input(f'White turn ? {manager.is_white_turn},  Movement : ')

@@ -1,6 +1,6 @@
 import re
 from cursor import DARK_GRAY, GREEN, DARK_GRAY, RED, RESET_CURSOR
-from movement_parser import ActionParser, ParsingResult
+from action_parser import ActionParser, ParsingResult
 
 with open('Viswanathan Anand_vs_Garry Kasparov_2021.07.10.pgn') as f:
     pgn_game = f.read()
@@ -30,24 +30,24 @@ for idx, turn in result.items():
     for action, res in turn.items():
         print(f'    Action : {action} ')
         print(f'        * Turn                   -> {"White" if res.white_turn else "Black"} ')
-        color = GREEN if res.final_score else DARK_GRAY
-        print(f'   {color}     * Final score            -> {res.final_score} ')
-        color = GREEN if res.rook else DARK_GRAY
-        print(f'   {color}     * Rook                   -> {res.rook} ')
-        color = GREEN if res.board_actions else DARK_GRAY
-        print(f'   {color}     * Board Action           -> {res.board_actions} ')
-        color = GREEN if res.piece else DARK_GRAY
-        print(f'   {color}     * Piece                  -> {res.piece} ')
-        color = GREEN if res.disambiguating_action else DARK_GRAY
-        print(f'   {color}     * Disambiguating action  -> {res.disambiguating_action} ')
-        color = GREEN if res.capture else DARK_GRAY
-        print(f'   {color}     * Capture                -> {res.capture} ')
-        color = GREEN if res.movement else DARK_GRAY
-        print(f'   {color}     * Movement               -> {res.movement} ')
-        color = GREEN if res.promotion else DARK_GRAY
-        print(f'   {color}     * Promotion              -> {res.promotion} ')
-        color = GREEN if res.checkmate else DARK_GRAY
-        print(f'   {color}     * Checkmate              -> {res.checkmate} {RESET_CURSOR} ')
+        COLOR = GREEN if res.final_score else DARK_GRAY
+        print(f'   {COLOR}     * Final score            -> {res.final_score} ')
+        COLOR = GREEN if res.rook else DARK_GRAY
+        print(f'   {COLOR}     * Rook                   -> {res.rook} ')
+        COLOR = GREEN if res.board_actions else DARK_GRAY
+        print(f'   {COLOR}     * Board Action           -> {res.board_actions} ')
+        COLOR = GREEN if res.piece else DARK_GRAY
+        print(f'   {COLOR}     * Piece                  -> {res.piece} ')
+        COLOR = GREEN if res.disambiguating_action else DARK_GRAY
+        print(f'   {COLOR}     * Disambiguating action  -> {res.disambiguating_action} ')
+        COLOR = GREEN if res.capture else DARK_GRAY
+        print(f'   {COLOR}     * Capture                -> {res.capture} ')
+        COLOR = GREEN if res.movement else DARK_GRAY
+        print(f'   {COLOR}     * Movement               -> {res.movement} ')
+        COLOR = GREEN if res.promotion else DARK_GRAY
+        print(f'   {COLOR}     * Promotion              -> {res.promotion} ')
+        COLOR = GREEN if res.checkmate else DARK_GRAY
+        print(f'   {COLOR}     * Checkmate              -> {res.checkmate} {RESET_CURSOR} ')
 
 # for res in result:
 #     res.print()
