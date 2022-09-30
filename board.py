@@ -1,4 +1,5 @@
 import sys
+from typing import List
 from chessman import *
 from cursor import BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
 
@@ -6,40 +7,60 @@ from cursor import BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
 class Board:
 
     def __init__(self) -> None:
-        self.board = []
+        self.__board = []
 
         # Board set-up
         for i in range(8):
-            self.board.append([None] * 8)
+            self.__board.append([None] * 8)
 
         # White
-        self.board[7][0] = Rook(7, 0, True)
-        self.board[7][1] = Knight(7, 1, True)
-        self.board[7][2] = Bishop(7, 2, True)
-        self.board[7][3] = Queen(7, 3, True)
-        self.board[7][4] = King(7, 4, True)
-        self.board[7][5] = Bishop(7, 5, True)
-        self.board[7][6] = Knight(7, 6, True)
-        self.board[7][7] = Rook(7, 7, True)
+        self.__board[7][0] = Rook(7, 0, True)
+        self.__board[7][1] = Knight(7, 1, True)
+        self.__board[7][2] = Bishop(7, 2, True)
+        self.__board[7][3] = Queen(7, 3, True)
+        self.__board[7][4] = King(7, 4, True)
+        self.__board[7][5] = Bishop(7, 5, True)
+        self.__board[7][6] = Knight(7, 6, True)
+        self.__board[7][7] = Rook(7, 7, True)
 
         # Black
         for i in range(8):
-            self.board[6][i] = Pawn(6, i, True)
-        self.board[0][0] = Rook(0, 0, False)
-        self.board[0][1] = Knight(0, 1, False)
-        self.board[0][2] = Bishop(0, 2, False)
-        self.board[0][3] = Queen(0, 3, False)
-        self.board[0][4] = King(0, 4, False)
-        self.board[0][5] = Bishop(0, 5, False)
-        self.board[0][6] = Knight(0, 6, False)
-        self.board[0][7] = Rook(0, 7, False)
+            self.__board[6][i] = Pawn(6, i, True)
+        self.__board[0][0] = Rook(0, 0, False)
+        self.__board[0][1] = Knight(0, 1, False)
+        self.__board[0][2] = Bishop(0, 2, False)
+        self.__board[0][3] = Queen(0, 3, False)
+        self.__board[0][4] = King(0, 4, False)
+        self.__board[0][5] = Bishop(0, 5, False)
+        self.__board[0][6] = Knight(0, 6, False)
+        self.__board[0][7] = Rook(0, 7, False)
 
         for i in range(8):
-            self.board[1][i] = Pawn(1, i, False)
+            self.__board[1][i] = Pawn(1, i, False)
 
-    def update_chessman(self, initial_position: tuple, new_position: tuple, new_chessman: Chessman):
-        self.board[initial_position[0]][initial_position[1]] = None
-        self.board[new_position[0]][new_position[1]] = new_chessman
+    def get(self, pos: tuple) -> Chessman:
+        return self.__board[pos[0]][pos[1]]
+
+    def get_chessmans(self, chessman: Chessman, color: bool=None)->List[Chessman]:
+        chessmans = []
+        for _, line in enumerate(self.__board):
+            for square in line:
+                if isinstance(square, chessman):
+                    if color :
+                        if square.isWhite == color:
+                            chessmans.append(square)
+                    else:
+                        chessmans.append(square)
+
+        return chessmans
+
+    def move_chessman(self, from_pos: tuple, to_pos: tuple,
+                        new_chessman: Chessman):
+        for pawn in self.get_chessmans(Pawn):
+            pawn.valid_for_en_passant_move = False
+        self.__board[from_pos[0]][from_pos[1]] = None
+        self.__board[to_pos[0]][to_pos[1]] = new_chessman
+        new_chessman.position = to_pos
 
     def print_board(self):
         ''''
@@ -49,7 +70,7 @@ class Board:
          '''
 
         tmp_str = '\n    '
-        for j in range(len(self.board[0])):
+        for j in range(len(self.__board[0])):
             tmp_str += (RED + ' ' + str(chr(j + 65)) + '  ')
         print(tmp_str)
 
@@ -58,9 +79,9 @@ class Board:
             buffer += BUFFER
         print(buffer)
 
-        for i in range(len(self.board)):
-            tmp_str = f' {RED}{str(len(self.board[0])-i)}{RESET_CURSOR}' + ' |'
-            for index, j in enumerate(self.board[i]):
+        for i in range(len(self.__board)):
+            tmp_str = f' {RED}{str(len(self.__board[0])-i)}{RESET_CURSOR}' + ' |'
+            for index, j in enumerate(self.__board[i]):
                 if j == None:
                     j = ' '
                 tmp_str += (' ' + str(j) + ' |')
@@ -80,29 +101,30 @@ class Board:
         precondition : chessman should return this for __str__ : f'{colorize} {self.name} {self.position} {INACTIVE}'
         '''
 
-        tmp_str = '\n    '
-        for j in range(len(self.board[0])):
-            tmp_str += (RED + '    ' + str(chr(j + 65)) + RESET_CURSOR + '      ')
+        tmp_str = '\n     '
+        for j in range(len(self.__board[0])):
+            tmp_str += (RED + '     ' + str(chr(j + 65)) + RESET_CURSOR +
+                        '      ')
         print(tmp_str)
 
-        buffer = '   '
+        buffer = '     '
         for i in range(8):
-            buffer += BUFFER * 11
+            buffer += BUFFER * 12
         print(buffer)
 
-        for i in range(len(self.board)):
-            tmp_str = RED + f'{str(len(self.board[0])-i)}' + RESET_CURSOR + ' |'
-            for index, j in enumerate(self.board[i]):
+        for i in range(len(self.__board)):
+            tmp_str = RED + f'  {str(len(self.__board[0])-i)} ' + RESET_CURSOR + ' |'
+            for index, j in enumerate(self.__board[i]):
                 if j == None:
-                    j = f'{DARK_GRAY}   ({i}, {index}) {RESET_CURSOR}'
+                    j = f'{DARK_GRAY}  ({i}, {index}) {RESET_CURSOR}'
 
-                tmp_str += (str(j) + '|')
+                tmp_str += (' ' + str(j) + ' |')
 
             print(tmp_str)
 
-        buffer = '   '
+        buffer = '     '
         for i in range(8):
-            buffer += BUFFER * 11
+            buffer += BUFFER * 12
         print(buffer + '\n')
 
-        sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines
+        # sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines

@@ -10,10 +10,10 @@ class BoardAction:
     ''' Dataclass to store a board action '''
     start_pos: tuple
     end_pos: tuple
-    piece: Chessman
+    chessman: Chessman
 
     def __repr__(self) -> str:
-        return f'{self.piece} : from {self.start_pos} to {self.end_pos} '
+        return f'{self.chessman} : from {self.start_pos} to {self.end_pos} '
 
 
 @dataclass
@@ -27,7 +27,7 @@ class ParsingResult:
     checkmate: str = None
     promotion: Chessman = None
     final_score: str = None
-    board_actions: BoardAction = None
+    board_actions: List[BoardAction] = None
     disambiguating_action: tuple = None
 
 
@@ -112,7 +112,10 @@ class ActionParser:
             Return the board movements associated
             with a king side rook for the white player
         '''
-        board_moves = [BoardAction((7, 4), (7, 5), Rook(7, 5, True)), BoardAction((7, 7), (7, 6), King(7, 6, True))]
+        board_moves = [
+            BoardAction((7, 7), (7, 5), Rook(7, 5, True)),
+            BoardAction((7, 4), (7, 6), King(7, 6, True))
+        ]
         return board_moves
 
     def queen_side_rook_white(self) -> List[BoardAction]:
@@ -120,7 +123,10 @@ class ActionParser:
             Return the board movements associated
             with a queen side rook for the white player
         '''
-        board_moves = [BoardAction((7, 0), (7, 3), Rook(7, 3, True)), BoardAction((7, 4), (7, 2), King(7, 2, True))]
+        board_moves = [
+            BoardAction((7, 0), (7, 3), Rook(7, 3, True)),
+            BoardAction((7, 4), (7, 2), King(7, 2, True))
+        ]
         return board_moves
 
     def king_side_rook_black(self) -> List[BoardAction]:
@@ -128,7 +134,10 @@ class ActionParser:
             Return the board movements associated
             with a king side rook for the black player
         '''
-        board_moves = [BoardAction((0, 4), (0, 5), Rook(0, 5, False)), BoardAction((0, 0), (0, 6), King(0, 6, False))]
+        board_moves = [
+            BoardAction((0, 7), (0, 5), Rook(0, 5, False)),
+            BoardAction((0, 4), (0, 6), King(0, 6, False))
+        ]
         return board_moves
 
     def queen_side_rook_black(self) -> List[BoardAction]:
@@ -136,7 +145,10 @@ class ActionParser:
             Return the board movements associated
             with a queen side rook for the black player
         '''
-        board_moves = [BoardAction((0, 0), (0, 3), Rook(0, 3, False)), BoardAction((0, 4), (0, 2), King(0, 2, False))]
+        board_moves = [
+            BoardAction((0, 0), (0, 3), Rook(0, 3, False)),
+            BoardAction((0, 4), (0, 2), King(0, 2, False))
+        ]
         return board_moves
 
     def check_piece(self):
@@ -241,7 +253,7 @@ class ActionParser:
         match = re.search(self.MOVE_REGEX, self.action)
         move = match.group()
         self.action = re.sub(self.MOVE_REGEX, '', self.action)
-        return move
+        return self.translate(move)
 
     def check_promotion(self):
         ''' Check for piece promotion pattern

@@ -32,28 +32,28 @@ class Chess_Manager:
 
     # region Rook
     def king_side_rook_white(self):
-        b = self.board.board
+        b = self.board.__board
         b[7][4] = None
         b[7][5] = Rook(7, 5, True)
         b[7][6] = King(7, 6, True)
         b[7][7] = None
 
     def queen_side_rook_white(self):
-        b = self.board.board
+        b = self.board.__board
         b[7][0] = None
         b[7][3] = Rook(7, 3, True)
         b[7][2] = King(7, 2, True)
         b[7][4] = None
 
     def king_side_rook_black(self):
-        b = self.board.board
+        b = self.board.__board
         b[0][4] = None
         b[0][5] = Rook(0, 5, False)
         b[0][6] = King(0, 6, False)
         b[0][7] = None
 
     def queen_side_rook_black(self):
-        b = self.board.board
+        b = self.board.__board
         b[0][0] = None
         b[0][3] = Rook(0, 3, False)
         b[0][2] = King(0, 2, False)
@@ -222,8 +222,8 @@ class Chess_Manager:
     def find_possible_chessman(self):
         # Find all chessmans
         chessmans = []
-        for i in range(len(self.board.board)):
-            for j in self.board.board[i]:
+        for i in range(len(self.board.__board)):
+            for j in self.board.__board[i]:
                 if j.__class__ == self.chessman:
                     chessmans.append(j)
 
@@ -276,7 +276,7 @@ class Chess_Manager:
 
     def identify_captured_chessman(self):
         if not self.capture: return None
-        return self.board.board[self.current_move[0]][self.current_move[1]]
+        return self.board.__board[self.current_move[0]][self.current_move[1]]
 
     def update_board(self):
 
@@ -301,7 +301,7 @@ class Chess_Manager:
                 chessman = promoted_chessman
 
         # Reset chessman initial position on board, and set is new position
-        self.board.update_chessman(initial_position, self.current_move, chessman)
+        self.board.move_chessman(initial_position, self.current_move, chessman)
 
         # print(f'Chessman : {chessman.name}, at position {chessman.position}')
         # print(f'Capture : {captured_chessman}')

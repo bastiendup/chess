@@ -1,21 +1,19 @@
-[Event "Man-Machine"]
-[Site "London ENG"]
-[Date "2005.06.22"]
-[Round "2"]
+[Event "It"]
+[Site "Dortmund GER"]
+[Date "2005.07.08"]
+[Round "1"]
 [White "Adams,Mi"]
-[Black "HYDRA"]
-[Result "1/2-1/2"]
-[WhiteElo "2737"]
-[BlackElo ""]
-[ECO "B47"]
+[Black "Topalov,V"]
+[Result "1-0"]
+[WhiteElo "2719"]
+[BlackElo "2788"]
+[ECO "C43"]
 
-1.e4 c5 2.Nc3 e6 3.Nf3 Nc6 4.d4 cxd4 5.Nxd4 Qc7 6.g3 a6 7.Bg2 d6 8.Nxc6 bxc6
-9.O-O Nf6 10.Na4 e5 11.c4 Be7 12.Be3 Be6 13.Rc1 O-O 14.b3 Qb7 15.Qe2 Rfe8
-16.h3 Rab8 17.Rfd1 Bf8 18.Kh2 h6 19.Rc2 Be7 20.Bc1 Qc7 21.Bb2 Nd7 22.Bc3 Nf8
-23.Qe3 c5 24.Bb2 Bd7 25.Nc3 Ne6 26.Nd5 Qd8 27.f4 Nd4 28.Rf2 Bc6 29.fxe5 dxe5
-30.Bxd4 cxd4 31.Qf3 Rf8 32.Qh5 f6 33.h4 Be8 34.Qf3 Bf7 35.Bh3 Rb7 36.h5 a5
-37.Kg2 Qe8 38.Bg4 Bc5 39.Rh1 Qc6 40.Rb2 Rfb8 41.Bf5 Kh8 42.Rhb1 Qe8 43.g4 Qc6
-44.Qd3 Bg8 45.Qd1 Qa6 46.Rd2 a4 47.Rdb2 Qa8 48.Kh2 Bf7 49.Kg2 Bf8 50.Kh2 Be8
-51.b4 a3 52.Rb3 Ba4 53.b5 Qa7 54.Kg2 Qc5 55.Qd3 Bxb3 56.Qxb3 Ra8 57.Rd1 Qd6
-58.Rc1 Qb8 59.Kf3 Bd6 60.Ke2 Bc5 61.Kd3 Qa7 62.Rb1 Qa5 63.Qc2 Qd8 64.Rh1 Qd6
-65.Qb3 Re8  1/2-1/2
+1.e4 e5 2.Nf3 Nf6 3.d4 Nxe4 4.Bd3 d5 5.Nxe5 Nd7 6.Nxd7 Bxd7 7.O-O Bd6 8.Nc3 Nxc3
+9.bxc3 O-O 10.Qh5 f5 11.Re1 c6 12.Bg5 Qc7 13.c4 Be8 14.Qh3 h6 15.Bd2 Qf7
+16.c5 Bc7 17.Rab1 Qd7 18.Qf3 Bg6 19.h4 Qf7 20.Bf4 Ba5 21.Rec1 Bh5 22.Qg3 b5
+23.cxb6 Bxb6 24.c3 Kh7 25.Be5 Qg6 26.Qf4 Rae8 27.Re1 Kg8 28.f3 Qf7 29.Bd6 Rxe1+
+30.Rxe1 Re8 31.Rxe8+ Qxe8 32.Be5 Bg6 33.Bxf5 Qf7 34.Bc8 Qxf4 35.Bxf4 Ba5
+36.Bb8 a6 37.Bxa6 Bb1 38.a3 Bxc3 39.Ba7 Bc2 40.h5 Kf7 41.Kf2 Bb2 42.Bc5 Bc1
+43.Ke1 Bf4 44.Be2 Bb3 45.g4 Ba4 46.Bd1 Bg3+ 47.Ke2 Bb5+ 48.Ke3 Bc7 49.a4 Bc4
+50.Bb4 Bh2 51.Kf2 g6 52.hxg6+ Kxg6 53.Be2 Bg1+ 54.Kxg1 Bxe2 55.Kf2  1-0

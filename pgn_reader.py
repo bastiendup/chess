@@ -25,7 +25,7 @@ for move in moves:
         continue
     for movement in move.split():
         manager.reset_turn()
-        time.sleep(.15)
+        time.sleep(1)
         manager.is_white_turn = not manager.is_white_turn
         sys.stdout.write(CURSOR_REWRITE_LINE)  # Delete line before writing it : avoid having the previous move written
         player = 'White' if manager.is_white_turn else 'Black'
