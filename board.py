@@ -1,7 +1,7 @@
 import sys
 from typing import List
 from chessman import *
-from cursor import BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
+from cursor import BLACK, BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
 
 
 class Board:
@@ -41,12 +41,14 @@ class Board:
     def get(self, pos: tuple) -> Chessman:
         return self.__board[pos[0]][pos[1]]
 
-    def get_chessmans(self, chessman: Chessman, color: bool=None)->List[Chessman]:
+    def get_chessmans(self,
+                      chessman: Chessman,
+                      color: bool = None) -> List[Chessman]:
         chessmans = []
         for _, line in enumerate(self.__board):
             for square in line:
                 if isinstance(square, chessman):
-                    if color :
+                    if color is not None:
                         if square.isWhite == color:
                             chessmans.append(square)
                     else:
@@ -55,18 +57,34 @@ class Board:
         return chessmans
 
     def move_chessman(self, from_pos: tuple, to_pos: tuple,
-                        new_chessman: Chessman):
+                      new_chessman: Chessman):
         for pawn in self.get_chessmans(Pawn):
             pawn.valid_for_en_passant_move = False
         self.__board[from_pos[0]][from_pos[1]] = None
         self.__board[to_pos[0]][to_pos[1]] = new_chessman
         new_chessman.position = to_pos
 
+    def promote(self, chessman: Pawn, into: Chessman, to: Tuple):
+        x = chessman.position[0]
+        y = chessman.position[1]
+        promoted_x = to[0]
+        promoted_y = to[1]
+        if into == Queen:
+            new = Queen(promoted_x, promoted_y, chessman.isWhite)
+        if into == Rook:
+            new = Rook(promoted_x, promoted_y, chessman.isWhite)
+        if into == Bishop:
+            new = Bishop(promoted_x, promoted_y, chessman.isWhite)
+        if into == Knight:
+            new = Knight(promoted_x, promoted_y, chessman.isWhite)
+        self.__board[x][y] = None
+        self.__board[promoted_x][promoted_y] = new
+
     def print_board(self):
         ''''
          Prints the current state of the board.
 
-         precondition : chessman should return this for __str__ : f'{colorize}{self.name}{colorize}'
+         precondition : chessman should return this for __str__ : f'{colorize}{icon}{RESET_CURSOR}'
          '''
 
         tmp_str = '\n    '
@@ -83,7 +101,7 @@ class Board:
             tmp_str = f' {RED}{str(len(self.__board[0])-i)}{RESET_CURSOR}' + ' |'
             for index, j in enumerate(self.__board[i]):
                 if j == None:
-                    j = ' '
+                    j = f'{BLACK}.{RESET_CURSOR}'
                 tmp_str += (' ' + str(j) + ' |')
             print(tmp_str)
 
@@ -92,13 +110,13 @@ class Board:
             buffer += BUFFER
         print(buffer + '\n')
 
-        sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines
+        # sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines
 
     def print_board_with_coordinates(self):
         '''
         Prints the current state of the board with chessman coordinates.
 
-        precondition : chessman should return this for __str__ : f'{colorize} {self.name} {self.position} {INACTIVE}'
+        precondition : chessman should return this for __str__ : f'{colorize}{icon} {self.position} {RESET_CURSOR}'
         '''
 
         tmp_str = '\n     '

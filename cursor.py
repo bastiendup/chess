@@ -8,9 +8,10 @@ LIGHT_RED = '\033[31m'
 GREEN = '\033[32m'
 BUFFER = '-'
 CURSOR_UP = '\033[F'
+CURSOR_DOWN = '\033[B'
 CURSOR_REWRITE_LINE = '\x1b[2K'
 
-PIECE_SET_1={
+PIECE_SET_1 = {
     'R': '♖',
     'N': '♘',
     'B': '♗',
@@ -19,7 +20,7 @@ PIECE_SET_1={
     'P': '♙',
 }
 
-PIECE_SET_2={
+PIECE_SET_2 = {
     'R': '♜',
     'N': '♞',
     'B': '♝',

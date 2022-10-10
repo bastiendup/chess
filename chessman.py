@@ -16,11 +16,10 @@ class Chessman:
         colorize = BLUE
         if self.isWhite:
             colorize = WHITE
-        icon = PIECE_SET_2.get(self.name)
+        icon = PIECE_SET_1.get(self.name)
 
-        #return f'{colorize}{icon}{RESET_CURSOR}'
-        return f'{colorize}{icon} {self.position} {RESET_CURSOR}'
-        # return f'{colorize} {self.name} {self.position} {self.RESET_COLOR}'
+        return f'{colorize}{icon}{RESET_CURSOR}'
+        # return f'{colorize}{icon} {self.position} {RESET_CURSOR}'
 
     def compute_possible_move(self, board, isWhiteTurn) -> list:
         pass

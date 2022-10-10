@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+import sys
 from typing import List
-from action_parser import ActionParser, BoardAction, ParsingResult
+from action_parser import BoardAction, ParsingResult
 from board import Board
 from chessman import Bishop, Chessman, Knight, Queen, Rook
+from cursor import CURSOR_DOWN
 
 
 @dataclass
@@ -48,16 +50,8 @@ class Manager:
 
         promotion = p_result.promotion
         if promotion:
-            x = chessman.position[0]
-            y = chessman.position[1]
-            if promotion == Queen:
-                chessman = Queen(x, y, turn)
-            if promotion == Rook:
-                chessman = Rook(x, y, turn)
-            if promotion == Bishop:
-                chessman = Bishop(x, y, turn)
-            if promotion == Knight:
-                chessman = Knight(x, y, turn)
+            self.board.promote(chessman, promotion, mvmt)
+            actions.pop()
 
         return TurnResult(chessman=chessman,
                           captured_chessman=captured_chessman,
@@ -93,7 +87,15 @@ class Manager:
         return False
 
     def print_board(self, turn: TurnResult):
+        if turn.score:
+            self.print_final_score(turn.score)
+            return True
         for action in turn.actions:
             self.board.move_chessman(action.start_pos, action.end_pos,
                                      action.chessman)
-        self.board.print_board_with_coordinates()
+        # self.board.print_board()
+        self.board.print_board()
+
+    def print_final_score(self, score):
+        sys.stdout.write(CURSOR_DOWN * 13)  # Cursor down 13 lines
+        print('  ' * 7 + score)
