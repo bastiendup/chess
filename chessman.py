@@ -8,6 +8,7 @@ class Chessman:
         self.__position = (x, y)
         self.isWhite = isWhite
         self.name = ''
+        self.full_name = ''
         self.possible_moves = []
         self.first_move = True
         self.valid_for_en_passant_move = False
@@ -21,7 +22,8 @@ class Chessman:
         return f'{colorize}{icon}{RESET_CURSOR}'
         # return f'{colorize}{icon} {self.position} {RESET_CURSOR}'
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         pass
 
     @property
@@ -37,6 +39,8 @@ class Pawn(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' pawn'
         self.name = 'P'
 
     def promote(self, target: Chessman):
@@ -50,9 +54,10 @@ class Pawn(Chessman):
     def position(self, to_pos: tuple):
         if to_pos[0] - self.position[0] == 2:
             self.valid_for_en_passant_move = True
-        super(Pawn, type(self)).position.fset(self, to_pos)
+        super(Pawn, type(self)).position.fset(self, to_pos)  # type: ignore
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 
@@ -136,9 +141,12 @@ class Rook(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' rook'
         self.name = 'R'
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 
@@ -204,7 +212,10 @@ class Knight(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' knight'
         self.name = 'N'
+
 
     def knight_move(self, target_x, target_y, board, is_white_turn):
 
@@ -217,7 +228,8 @@ class Knight(Chessman):
                 #     self.possible_moves = []
                 self.possible_moves.append((x, y))
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 
@@ -248,9 +260,12 @@ class Bishop(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' bishop'
         self.name = 'B'
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 
@@ -329,9 +344,13 @@ class Queen(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' queen'
         self.name = 'Q'
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 
@@ -469,9 +488,13 @@ class King(Chessman):
 
     def __init__(self, x, y, isWhite) -> None:
         super().__init__(x, y, isWhite)
+        color = 'white' if isWhite else 'black'
+        self.full_name = color + ' king'
         self.name = 'K'
 
-    def compute_possible_move(self, board, isWhiteTurn) -> list:
+
+    def compute_possible_move(self, board,
+                              isWhiteTurn) -> list:  # type: ignore
         # Reset possible moves
         self.possible_moves = []
 

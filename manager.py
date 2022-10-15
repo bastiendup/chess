@@ -9,12 +9,13 @@ from cursor import CURSOR_DOWN
 
 @dataclass
 class TurnResult:
-    chessman: Chessman = None
-    captured_chessman: Chessman = None
-    promotion: Chessman = None
-    score: str = None
-    actions: List[BoardAction] = None
-    player: str = None
+    chessman: Chessman = None  # type: ignore
+    rook: str = None  # type: ignore
+    captured_chessman: Chessman = None  # type: ignore
+    promotion: Chessman = None  # type: ignore
+    score: str = None  # type: ignore
+    actions: List[BoardAction] = None  # type: ignore
+    player: str = None  # type: ignore
 
 
 class Manager:
@@ -23,7 +24,7 @@ class Manager:
     def __init__(self):
         self.board = Board()
 
-    def compute_parsing_result(self, p_result: ParsingResult) -> TurnResult:
+    def compute_parsing_result(self, p_result: ParsingResult) -> TurnResult: 
         """ Compute a parsing result """
 
         turn = p_result.white_turn
@@ -33,9 +34,9 @@ class Manager:
         if final_score:
             return TurnResult(score=final_score, player=player)
 
-        actions = p_result.board_actions
-        if actions:
-            return TurnResult(actions=actions, player=player)
+        rook = p_result.rook
+        if rook:
+            return TurnResult(actions=p_result.board_actions,rook=rook, player=player)
 
         captured_chessman = None
         if p_result.capture:
@@ -50,17 +51,20 @@ class Manager:
 
         promotion = p_result.promotion
         if promotion:
-            self.board.promote(chessman, promotion, mvmt)
+            promotion = self.board.promote(chessman, promotion, mvmt)  # type: ignore
             actions.pop()
 
+        
+        # TODO : ajouter la prise en compte de l'echec et echec et mat
+
         return TurnResult(chessman=chessman,
-                          captured_chessman=captured_chessman,
+                          captured_chessman=captured_chessman,  # type: ignore
                           promotion=promotion,
                           actions=actions,
                           player=player)
 
     def identify_chesssman(self, chessmans: List[Chessman], helper: tuple,
-                           white_turn: bool, target: tuple) -> Chessman:
+                           white_turn: bool, target: tuple) -> Chessman:  # type: ignore
         """ Method to identify the chessman """
         for chessman in chessmans:
             chessman.compute_possible_move(self.board, white_turn)

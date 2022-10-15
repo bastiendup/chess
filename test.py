@@ -3,68 +3,39 @@ import sys
 import time
 from cursor import BLACK, BLUE, CURSOR_REWRITE_LINE, CURSOR_UP, DARK_GRAY, GREEN, DARK_GRAY, RED, RESET_CURSOR, WHITE
 from action_parser import ActionParser, ParsingResult
+from descriptor import Descriptor
 from manager import Manager, TurnResult
 
 
-def print_action(action):
-    print('\n')
-    print(
-        f'        * Turn                   -> {"White" if action.white_turn else "Black"} '
-    )
-    COLOR = GREEN if action.final_score else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Final score            -> {action.final_score} '
-    )
-    COLOR = GREEN if action.rook else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Rook                   -> {action.rook} '
-    )
-    COLOR = GREEN if action.board_actions else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Board Action           -> {action.board_actions} '
-    )
-    COLOR = GREEN if action.piece else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Piece                  -> {action.piece} '
-    )
-    COLOR = GREEN if action.disambiguating_action else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Disambiguating action  -> {action.disambiguating_action} '
-    )
-    COLOR = GREEN if action.capture else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Capture                -> {action.capture} '
-    )
-    COLOR = GREEN if action.movement else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Movement               -> {action.movement} '
-    )
-    COLOR = GREEN if action.promotion else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Promotion              -> {action.promotion} '
-    )
-    COLOR = GREEN if action.checkmate else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Checkmate              -> {action.checkmate} {RESET_CURSOR} '
-    )
+def add_line(string: str, action, color_true=GREEN, color_false=DARK_GRAY, end_of_line='\n'):
+    color = color_true if action else color_false
+    return '{}{}     * {}{} -> {}{}{}'.format(CURSOR_REWRITE_LINE, color,
+                                                    string,
+                                                    " " * (23 - len(string)),
+                                                    action, RESET_CURSOR, end_of_line)
+
+
+def print_action(action:ParsingResult):
+    string = '\n'
+    string += add_line('Final score', action.final_score)
+    string += add_line('Rook', action.rook)
+    string += add_line('Board Action', action.board_actions)
+    string += add_line('Piece', action.piece)
+    string += add_line('Disambiguating action', action.disambiguating_action)
+    string += add_line('Capture', action.capture)
+    string += add_line('Movement', action.movement)
+    string += add_line('Promotion', action.promotion)
+    string += add_line('Checkmate', action.checkmate, end_of_line='')
+    print(string)
+    
 
 
 def print_turn(turn: TurnResult):
-    print('\n')
-    # COLOR = WHITE if turn.player == 'white' else BLUE
-    # print(f'   {COLOR}     * Player                 -> {turn.player} {RESET_CURSOR}')
-    COLOR = GREEN if turn.chessman else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Chessman               -> {turn.chessman} {RESET_CURSOR}'
-    )
-    COLOR = GREEN if turn.captured_chessman else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Capture                -> {turn.captured_chessman} {RESET_CURSOR}'
-    )
-    COLOR = GREEN if turn.actions else DARK_GRAY
-    print(
-        f'{CURSOR_REWRITE_LINE}   {COLOR}     * Actions                -> {RESET_CURSOR}{turn.actions} '
-    )
+    string = '\n'
+    string += add_line('Chessman', turn.chessman)
+    string += add_line('Capture', turn.captured_chessman)
+    string += add_line('Actions', turn.actions, end_of_line='')
+    print(string)
 
 
 with open('Viswanathan Anand_vs_Garry Kasparov_2021.07.10.pgn') as f:
@@ -103,16 +74,17 @@ for idx, turn in parsing_result.items():
 
         mvmt = value.get('mvmt')
         action = value.get('action')
-        player = f'{WHITE}White{RESET_CURSOR}' if action.white_turn else f'{BLUE}Black{RESET_CURSOR}'
+        color = WHITE if action.white_turn else BLUE
+        player = 'White' if action.white_turn else 'Black'
 
         print(
-            f'{CURSOR_REWRITE_LINE}Turn : {idx} \n  Action : {mvmt}        \n  Player : {player}              '
+            f'{CURSOR_REWRITE_LINE}Turn : {idx} \n {color} Action : {mvmt}        \n  Player : {player}              {RESET_CURSOR}'
         )
 
         # print_action(action)
 
         res = manager.compute_parsing_result(action)
-        turn_results[idx][mvmt] = res
+        turn_results[idx][player] = res
 
         # print_turn(res)
 
@@ -120,7 +92,12 @@ for idx, turn in parsing_result.items():
             sys.stdout.write(CURSOR_UP * 16)  # Cursor up 14 lines
             # sys.stdout.write(CURSOR_UP * 31)  # Cursor up 14 lines
 
-        time.sleep(.02)
+        # time.sleep(.02)
+
+for k, v in turn_results.items():
+    for kk, vv in v.items():
+        Descriptor.describe(vv) 
+
 
 # for res in result:
 #     res.print()

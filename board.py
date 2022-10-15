@@ -43,11 +43,11 @@ class Board:
 
     def get_chessmans(self,
                       chessman: Chessman,
-                      color: bool = None) -> List[Chessman]:
+                      color: bool = None) -> List[Chessman]:  # type: ignore
         chessmans = []
         for _, line in enumerate(self.__board):
             for square in line:
-                if isinstance(square, chessman):
+                if isinstance(square, chessman):  # type: ignore
                     if color is not None:
                         if square.isWhite == color:
                             chessmans.append(square)
@@ -58,7 +58,7 @@ class Board:
 
     def move_chessman(self, from_pos: tuple, to_pos: tuple,
                       new_chessman: Chessman):
-        for pawn in self.get_chessmans(Pawn):
+        for pawn in self.get_chessmans(Pawn):  # type: ignore
             pawn.valid_for_en_passant_move = False
         self.__board[from_pos[0]][from_pos[1]] = None
         self.__board[to_pos[0]][to_pos[1]] = new_chessman
@@ -70,15 +70,19 @@ class Board:
         promoted_x = to[0]
         promoted_y = to[1]
         if into == Queen:
-            new = Queen(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Queen(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Rook:
-            new = Rook(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Rook(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Bishop:
-            new = Bishop(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Bishop(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Knight:
-            new = Knight(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Knight(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         self.__board[x][y] = None
-        self.__board[promoted_x][promoted_y] = new
+        return new_chessman
 
     def print_board(self):
         ''''
