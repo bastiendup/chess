@@ -29,7 +29,7 @@ class Manager:
         self.logger = Logger()
         self.board = Board(self.logger)
 
-    def compute_parsing_result(self, p_result: ParsingResult) -> TurnResult:
+    def compute_parsing_result(self, p_result: ParsingResult) -> TurnResult: 
         """ Compute a parsing result """
 
         turn = p_result.white_turn
