@@ -1,12 +1,14 @@
 import sys
 from typing import List
 from chessman import *
-from cursor import BLACK, BUFFER, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
+from cursor import BLACK, BUFFER, CURSOR_REWRITE_LINE, CURSOR_UP, DARK_GRAY, RESET_CURSOR, RED
+from logger import Logger
 
 
 class Board:
 
-    def __init__(self) -> None:
+    def __init__(self, logger:Logger) -> None:
+        self.logger = logger
         self.__board = []
 
         # Board set-up
@@ -43,11 +45,11 @@ class Board:
 
     def get_chessmans(self,
                       chessman: Chessman,
-                      color: bool = None) -> List[Chessman]:
+                      color: bool = None) -> List[Chessman]:  # type: ignore
         chessmans = []
         for _, line in enumerate(self.__board):
             for square in line:
-                if isinstance(square, chessman):
+                if isinstance(square, chessman):  # type: ignore
                     if color is not None:
                         if square.isWhite == color:
                             chessmans.append(square)
@@ -58,7 +60,7 @@ class Board:
 
     def move_chessman(self, from_pos: tuple, to_pos: tuple,
                       new_chessman: Chessman):
-        for pawn in self.get_chessmans(Pawn):
+        for pawn in self.get_chessmans(Pawn):  # type: ignore
             pawn.valid_for_en_passant_move = False
         self.__board[from_pos[0]][from_pos[1]] = None
         self.__board[to_pos[0]][to_pos[1]] = new_chessman
@@ -70,15 +72,19 @@ class Board:
         promoted_x = to[0]
         promoted_y = to[1]
         if into == Queen:
-            new = Queen(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Queen(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Rook:
-            new = Rook(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Rook(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Bishop:
-            new = Bishop(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Bishop(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         if into == Knight:
-            new = Knight(promoted_x, promoted_y, chessman.isWhite)
+            new_chessman = Knight(promoted_x, promoted_y, chessman.isWhite)
+            self.__board[promoted_x][promoted_y] = new_chessman
         self.__board[x][y] = None
-        self.__board[promoted_x][promoted_y] = new
+        return new_chessman
 
     def print_board(self):
         ''''
@@ -87,12 +93,14 @@ class Board:
          precondition : chessman should return this for __str__ : f'{colorize}{icon}{RESET_CURSOR}'
          '''
 
+
+
         tmp_str = '\n    '
         for j in range(len(self.__board[0])):
             tmp_str += (RED + ' ' + str(chr(j + 65)) + '  ')
         print(tmp_str)
 
-        buffer = RESET_CURSOR + '    '
+        buffer = RESET_CURSOR + '     '
         for i in range(31):
             buffer += BUFFER
         print(buffer)
@@ -102,14 +110,13 @@ class Board:
             for index, j in enumerate(self.__board[i]):
                 if j == None:
                     j = f'{BLACK}.{RESET_CURSOR}'
-                tmp_str += (' ' + str(j) + ' |')
-            print(tmp_str)
+                tmp_str += (' ' + str(j) + ' |') 
+            print(CURSOR_REWRITE_LINE, tmp_str,  self.logger.get_log(8-i) )
 
-        buffer = RESET_CURSOR + '    '
+        buffer = RESET_CURSOR + '     '
         for i in range(31):
             buffer += BUFFER
         print(buffer + '\n')
-
         # sys.stdout.write(CURSOR_UP * 14)  # Cursor up 14 lines
 
     def print_board_with_coordinates(self):

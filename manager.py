@@ -1,27 +1,33 @@
-from dataclasses import dataclass
 import sys
+from dataclasses import dataclass
 from typing import List
+
 from action_parser import BoardAction, ParsingResult
 from board import Board
-from chessman import Bishop, Chessman, Knight, Queen, Rook
+from chessman import Chessman
 from cursor import CURSOR_DOWN
+from logger import Logger
 
 
 @dataclass
 class TurnResult:
-    chessman: Chessman = None
-    captured_chessman: Chessman = None
-    promotion: Chessman = None
-    score: str = None
-    actions: List[BoardAction] = None
-    player: str = None
+    chessman: Chessman = None  # type: ignore
+    rook: str = None  # type: ignore
+    captured_chessman: Chessman = None  # type: ignore
+    promotion: Chessman = None  # type: ignore
+    score: str = None  # type: ignore
+    actions: List[BoardAction] = None  # type: ignore
+    check: bool = None  # type: ignore
+    checkmate: bool = None  # type: ignore
+    player: str = None  # type: ignore
 
 
 class Manager:
     ''' Class to handle a board result '''
 
     def __init__(self):
-        self.board = Board()
+        self.logger = Logger()
+        self.board = Board(self.logger)
 
     def compute_parsing_result(self, p_result: ParsingResult) -> TurnResult:
         """ Compute a parsing result """
@@ -33,9 +39,11 @@ class Manager:
         if final_score:
             return TurnResult(score=final_score, player=player)
 
-        actions = p_result.board_actions
-        if actions:
-            return TurnResult(actions=actions, player=player)
+        rook = p_result.rook
+        if rook:
+            return TurnResult(actions=p_result.board_actions,
+                              rook=rook,
+                              player=player)
 
         captured_chessman = None
         if p_result.capture:
@@ -50,17 +58,33 @@ class Manager:
 
         promotion = p_result.promotion
         if promotion:
-            self.board.promote(chessman, promotion, mvmt)
+            promotion = self.board.promote(
+                chessman,  # type: ignore
+                promotion,
+                mvmt)
             actions.pop()
 
-        return TurnResult(chessman=chessman,
-                          captured_chessman=captured_chessman,
-                          promotion=promotion,
-                          actions=actions,
-                          player=player)
+        # TODO : ajouter la prise en compte de l'echec et echec et mat
+
+        check, checkmate = None, None
+        if p_result.checkmate:
+            if p_result.checkmate == 'Check':
+                check = True
+            else:
+                checkmate = True
+
+        return TurnResult(
+            chessman=chessman,
+            captured_chessman=captured_chessman,  # type: ignore
+            promotion=promotion,
+            actions=actions,
+            player=player,
+            check=check,  # type: ignore
+            checkmate=checkmate)  # type: ignore
 
     def identify_chesssman(self, chessmans: List[Chessman], helper: tuple,
-                           white_turn: bool, target: tuple) -> Chessman:
+                           white_turn: bool,
+                           target: tuple) -> Chessman:  # type: ignore
         """ Method to identify the chessman """
         for chessman in chessmans:
             chessman.compute_possible_move(self.board, white_turn)
@@ -87,13 +111,14 @@ class Manager:
         return False
 
     def print_board(self, turn: TurnResult):
+        #TODO : peut mieux faire
+        self.logger.add_log(turn)
         if turn.score:
             self.print_final_score(turn.score)
             return True
         for action in turn.actions:
             self.board.move_chessman(action.start_pos, action.end_pos,
                                      action.chessman)
-        # self.board.print_board()
         self.board.print_board()
 
     def print_final_score(self, score):

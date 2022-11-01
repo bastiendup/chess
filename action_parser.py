@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import re
-from typing import List
+import string
+from typing import List, Tuple
 
 from chessman import Bishop, Chessman, King, Knight, Pawn, Queen, Rook
 
@@ -20,15 +21,16 @@ class BoardAction:
 class ParsingResult:
     ''' Dataclass to store a parsing result '''
     white_turn: bool
-    rook: bool = False
-    movement: tuple = None
+    rook: str = None  # type: ignore
+    movement: tuple = None  # type: ignore
     capture: bool = False
-    piece: Chessman = None
-    checkmate: str = None
-    promotion: Chessman = None
-    final_score: str = None
-    board_actions: List[BoardAction] = None
-    disambiguating_action: tuple = None
+    piece: Chessman = None  # type: ignore
+    checkmate: str = None  # type: ignore
+    promotion: Chessman = None  # type: ignore
+    final_score: str = None  # type: ignore
+    board_actions: List[BoardAction] = None  # type: ignore
+    disambiguating_action: tuple = None  # type: ignore
+
 
 
 class ActionParser:
@@ -59,11 +61,14 @@ class ActionParser:
 
         final_score = self.check_final_score()
         if final_score:
-            return ParsingResult(white_turn=is_white_turn, final_score=final_score)
+            return ParsingResult(white_turn=is_white_turn,
+                                 final_score=final_score)
 
-        board_moves = self.check_rook()
+        board_moves, rook = self.check_rook()
         if board_moves:
-            return ParsingResult(white_turn=is_white_turn, rook=True, board_actions=board_moves)
+            return ParsingResult(white_turn=is_white_turn,
+                                 rook=rook, # type: ignore
+                                 board_actions=board_moves)  
 
         piece = self.check_piece()
         disambiguating = self.check_disambiguating()
@@ -73,12 +78,12 @@ class ActionParser:
         checkmate = self.check_checkmate()
 
         return ParsingResult(white_turn=is_white_turn,
-                             piece=piece,
-                             disambiguating_action=disambiguating,
-                             capture=capture,
+                             piece=piece,  # type: ignore
+                             disambiguating_action=disambiguating,  # type: ignore
+                             capture=capture,  # type: ignore
                              movement=move,
-                             promotion=promotion,
-                             checkmate=checkmate)
+                             promotion=promotion,  # type: ignore
+                             checkmate=checkmate)  # type: ignore
 
     def check_final_score(self):
         ''' Check for a final_score pattern
@@ -86,7 +91,7 @@ class ActionParser:
         This pattern indicate the end of the game, and the final score
         '''
 
-        match = re.search(self.FINAL_SCORE_REGEX, self.action)
+        match = re.search(self.FINAL_SCORE_REGEX, self.action)  # type: ignore
         if match:
             possible_scores = {'1/2-1/2': 'DRAW', '1-0': 'WHITE WINS', '0-1': 'BLACK WINS', '*': 'INTERRUPTED GAME'}
             return possible_scores[match.group()]
@@ -99,15 +104,15 @@ class ActionParser:
         based on the rook side and color
         '''
 
-        match = re.search(self.ROOK_REGEX, self.action)
+        match = re.search(self.ROOK_REGEX, self.action)  # type: ignore
         if match:
             color = 'white' if self.is_white_turn else 'black'
             possible_rooks = {'O-O': 'king_side_rook_', 'O-O-O': 'queen_side_rook_'}
             rook = possible_rooks[match.group()] + color
             return getattr(self, rook)()
-        return None
+        return None, None
 
-    def king_side_rook_white(self) -> List[BoardAction]:
+    def king_side_rook_white(self):
         '''
             Return the board movements associated
             with a king side rook for the white player
@@ -116,9 +121,9 @@ class ActionParser:
             BoardAction((7, 7), (7, 5), Rook(7, 5, True)),
             BoardAction((7, 4), (7, 6), King(7, 6, True))
         ]
-        return board_moves
+        return board_moves, 'White player rook from king side.'
 
-    def queen_side_rook_white(self) -> List[BoardAction]:
+    def queen_side_rook_white(self):
         '''
             Return the board movements associated
             with a queen side rook for the white player
@@ -127,9 +132,9 @@ class ActionParser:
             BoardAction((7, 0), (7, 3), Rook(7, 3, True)),
             BoardAction((7, 4), (7, 2), King(7, 2, True))
         ]
-        return board_moves
+        return board_moves, 'White player rook from queen side.'
 
-    def king_side_rook_black(self) -> List[BoardAction]:
+    def king_side_rook_black(self):
         '''
             Return the board movements associated
             with a king side rook for the black player
@@ -138,9 +143,9 @@ class ActionParser:
             BoardAction((0, 7), (0, 5), Rook(0, 5, False)),
             BoardAction((0, 4), (0, 6), King(0, 6, False))
         ]
-        return board_moves
+        return board_moves, 'Black player rook from king side.'
 
-    def queen_side_rook_black(self) -> List[BoardAction]:
+    def queen_side_rook_black(self):
         '''
             Return the board movements associated
             with a queen side rook for the black player
@@ -149,7 +154,7 @@ class ActionParser:
             BoardAction((0, 0), (0, 3), Rook(0, 3, False)),
             BoardAction((0, 4), (0, 2), King(0, 2, False))
         ]
-        return board_moves
+        return board_moves, 'Black player rook from queen side.'
 
     def check_piece(self):
         ''' Check for a piece pattern
@@ -157,10 +162,10 @@ class ActionParser:
         If no pattern is present, the piece is a Pawn
         '''
 
-        match = re.search(self.PIECE_REGEX, self.action)
+        match = re.search(self.PIECE_REGEX, self.action)  # type: ignore
         if match:
             pieces = {'K': King, 'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
-            self.action = re.sub(self.PIECE_REGEX, '', self.action)
+            self.action = re.sub(self.PIECE_REGEX, '', self.action)  # type: ignore
             return pieces[match.group()]
         return Pawn
 
@@ -190,9 +195,9 @@ class ActionParser:
             of departure of the piece
         '''
 
-        match = re.search(self.DISAMBIGUATING_FILE_REGEX, self.action)
+        match = re.search(self.DISAMBIGUATING_FILE_REGEX, self.action)  # type: ignore
         if match:
-            self.action = re.sub(self.DISAMBIGUATING_FILE_REGEX, r'\g<2>', self.action)
+            self.action = re.sub(self.DISAMBIGUATING_FILE_REGEX, r'\g<2>', self.action)  # type: ignore
             return [match.group(1), None]
         return None
 
@@ -203,9 +208,9 @@ class ActionParser:
             of departure of the piece
         '''
 
-        match = re.search(self.DISAMBIGUATING_RANK_REGEX, self.action)
+        match = re.search(self.DISAMBIGUATING_RANK_REGEX, self.action)  # type: ignore
         if match:
-            self.action = re.sub(self.DISAMBIGUATING_RANK_REGEX, r'\g<2>', self.action)
+            self.action = re.sub(self.DISAMBIGUATING_RANK_REGEX, r'\g<2>', self.action)  # type: ignore
             return [None, match.group(1)]
         return None
 
@@ -216,9 +221,9 @@ class ActionParser:
             of departure of the piece
         '''
 
-        match = re.search(self.DISAMBIGUATING_FILE_AND_RANK_REGEX, self.action)
+        match = re.search(self.DISAMBIGUATING_FILE_AND_RANK_REGEX, self.action)  # type: ignore
         if match:
-            self.action = re.sub(self.DISAMBIGUATING_FILE_AND_RANK_REGEX, r'\g<2>', self.action)
+            self.action = re.sub(self.DISAMBIGUATING_FILE_AND_RANK_REGEX, r'\g<2>', self.action)  # type: ignore
             return match.group(1)
         return None
 
@@ -235,24 +240,24 @@ class ActionParser:
 
         board_coordinates = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
         if row is None:
-            return (None, board_coordinates[col])
+            return (None, board_coordinates[col])  # type: ignore
         if col is None:
             return (8 - row, None)
         return (8 - row, board_coordinates[col])
 
     def check_capture(self):
-        match = re.search(self.CAPTURE_REGEX, self.action)
+        match = re.search(self.CAPTURE_REGEX, self.action)  # type: ignore
         if match:
-            self.action = re.sub(self.CAPTURE_REGEX, '', self.action)
+            self.action = re.sub(self.CAPTURE_REGEX, '', self.action)  # type: ignore
             return True
         return None
 
     def check_move(self):
         ''' Check for the piece movement pattern'''
 
-        match = re.search(self.MOVE_REGEX, self.action)
+        match = re.search(self.MOVE_REGEX, self.action)  # type: ignore
         move = match.group()
-        self.action = re.sub(self.MOVE_REGEX, '', self.action)
+        self.action = re.sub(self.MOVE_REGEX, '', self.action)  # type: ignore
         return self.translate(move)
 
     def check_promotion(self):
@@ -260,11 +265,11 @@ class ActionParser:
         This pattern indicate if there is a chessman promotion during the turn
         '''
 
-        match = re.search(self.PROMOTION_REGEX, self.action)
+        match = re.search(self.PROMOTION_REGEX, self.action)  # type: ignore
         if match:
             promote_piece = {'B': Bishop, 'Q': Queen, 'N': Knight, 'R': Rook}
             promotion = promote_piece[match.group(1)]
-            self.action = re.sub(self.PROMOTION_REGEX, '', self.action)
+            self.action = re.sub(self.PROMOTION_REGEX, '', self.action)  # type: ignore
             return promotion
         return None
 
@@ -273,10 +278,10 @@ class ActionParser:
         This pattern indicate if there is a check or a checkmate move
         '''
 
-        match = re.search(self.CHECKMATE_REGEX, self.action)
+        match = re.search(self.CHECKMATE_REGEX, self.action)  # type: ignore
         if match:
             check_ending = {'+': 'Check', '#': 'Checkmate'}
             checkmate = check_ending[match.group(1)]
-            self.action = re.sub(self.CHECKMATE_REGEX, '', self.action)
+            self.action = re.sub(self.CHECKMATE_REGEX, '', self.action)  # type: ignore
             return checkmate
         return None
