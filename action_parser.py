@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import re
 import string
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from chessman import Bishop, Chessman, King, Knight, Pawn, Queen, Rook
 
@@ -21,7 +21,7 @@ class BoardAction:
 class ParsingResult:
     ''' Dataclass to store a parsing result '''
     white_turn: bool
-    rook: str = None  # type: ignore
+    rook: Optional[str] = None
     movement: tuple = None  # type: ignore
     capture: bool = False
     piece: Chessman = None  # type: ignore

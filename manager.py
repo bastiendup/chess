@@ -65,7 +65,6 @@ class Manager:
             actions.pop()
 
         # TODO : ajouter la prise en compte de l'echec et echec et mat
-
         check, checkmate = None, None
         if p_result.checkmate:
             if p_result.checkmate == 'Check':
