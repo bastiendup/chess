@@ -17,7 +17,7 @@ class Chessman:
         colorize = BLUE
         if self.isWhite:
             colorize = WHITE
-        icon = PIECE_SET_2.get(self.name)
+        icon = PIECE_SET_1.get(self.name)
 
         return f'{colorize}{icon}{RESET_CURSOR}'
         # return f'{colorize}{icon} {self.position} {RESET_CURSOR}'
@@ -103,7 +103,7 @@ class Pawn(Chessman):
                 self.possible_moves.append((possible_x, possible_y))
         """  "En passant" move :
         To execute this move, the pawn needs to be on the 5th line (line 5 if white, 4 if black)
-        And if the opposite team move one of his pawn by two square, 
+        And if the opposite team move one of his pawn by two square,
         and position it next to the current pawn on last turn
         """
         if self.isWhite:

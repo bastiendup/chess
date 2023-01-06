@@ -17,7 +17,7 @@ def add_line(string: str,
         CURSOR_REWRITE_LINE, color,
         string,
         " " * (23 - len(string)),
-        action, 
+        action,
         RESET_CURSOR, end_of_line)
 
 
@@ -82,9 +82,7 @@ for idx, turn in parsing_result.items():
         color = WHITE if action.white_turn else BLUE
         player = 'White' if action.white_turn else 'Black'
 
-        print(
-            f'{CURSOR_REWRITE_LINE}Turn : {idx} \n {color} Action : {mvmt}        \n  Player : {player}              {RESET_CURSOR}'
-        )
+        print(f'{CURSOR_REWRITE_LINE}Turn : {idx} \n {color} Action : {mvmt}        \n  Player : {player}             ')
 
         # print_action(action)
 
@@ -94,10 +92,10 @@ for idx, turn in parsing_result.items():
         # print_turn(res)
 
         if not manager.print_board(res):
-            sys.stdout.write(CURSOR_UP * 16)  # Cursor up 14 lines
+            print(CURSOR_UP * 17)  # Cursor up 14 lines
             # sys.stdout.write(CURSOR_UP * 31)  # Cursor up 14 lines
 
-        time.sleep(.05)
+        time.sleep(1)
 
 # for k, v in turn_results.items():
 #     for kk, vv in v.items():

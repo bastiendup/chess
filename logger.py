@@ -14,6 +14,6 @@ class Logger:
             return ''
 
         return '{}{} : {}'.format(
-            " " * 5, 
-            len(self.LOGS)- index+1, 
+            " " * 5,
+            len(self.LOGS)- index+1,
             self.LOGS[-index])

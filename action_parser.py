@@ -68,7 +68,7 @@ class ActionParser:
         if board_moves:
             return ParsingResult(white_turn=is_white_turn,
                                  rook=rook, # type: ignore
-                                 board_actions=board_moves)  
+                                 board_actions=board_moves)
 
         piece = self.check_piece()
         disambiguating = self.check_disambiguating()
